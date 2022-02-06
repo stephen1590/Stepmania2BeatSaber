@@ -4,8 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
-    static class Program
-    {
+    static class Program{
         private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
         private static readonly string pFilename = "BREAK DOWN!.sm";
         private static readonly string pSongName = pFilename.Split(".")[0];
@@ -54,15 +53,13 @@ namespace Stepmania2BeatSaber
             }
         }
         public static string GetNextLine(StreamReader sr){
-            try
-            {
+            try{
                 var retVal = sr.ReadLine();
                 if (retVal == null)
                     return "";
                 return (string)retVal;
             }
-            catch
-            {
+            catch{
                 return "";
             }
         }
@@ -72,8 +69,7 @@ namespace Stepmania2BeatSaber
             OrderedDictionary retHash = new();
             string line;
             string filename = pDir + @"\" + pFilename;
-            try
-            {
+            try{
                 using (StreamReader reader = new(filename)){
                     // Read one line from file
                     while (reader != null && !reader.EndOfStream){
@@ -101,8 +97,7 @@ namespace Stepmania2BeatSaber
                                             noteCount += 1;
                                             Output("Note#" + noteCount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                         }
-                                        else
-                                        {
+                                        else{
                                             if (line.StartsWith(";"))
                                                 newDifficulty = true;
                                             break;
@@ -135,14 +130,12 @@ namespace Stepmania2BeatSaber
                 Output("Creating song: " + key, ConsoleColor.Cyan);
                 ArrayList notesByDifficulty = new();
                 if (allData != null && allData[key] != null)
-                    try
-                    {
+                    try{
                         var temp = allData[key];
                         if (temp != null)
                             notesByDifficulty = (ArrayList)temp;
                     }
-                    catch
-                    {
+                    catch{
                         notesByDifficulty = new();
                     }
                 ArrayList retArray = new();
@@ -166,32 +159,27 @@ namespace Stepmania2BeatSaber
                                     if (count > 1)
                                         note.Type = Type.blue;
                                     switch (count){
-                                        case 0:
-                                            {
+                                        case 0:{
                                                 note.CutDirection = CutDirection.left;
                                                 note.LineIndex = LineIndex.left;
                                                 break;
                                             }
-                                        case 1:
-                                            {
+                                        case 1:{
                                                 note.CutDirection = CutDirection.down;
                                                 note.LineIndex = LineIndex.centerLeft;
                                                 break;
                                             }
-                                        case 2:
-                                            {
+                                        case 2:{
                                                 note.CutDirection = CutDirection.up;
                                                 note.LineIndex = LineIndex.centerRight;
                                                 break;
                                             }
-                                        case 3:
-                                            {
+                                        case 3:{
                                                 note.CutDirection = CutDirection.right;
                                                 note.LineIndex = LineIndex.right;
                                                 break;
                                             }
-                                        default:
-                                            {
+                                        default:{
                                                 throw new NotImplementedException("Too many notes. Something is critically wrong.");
                                             }
                                     }
@@ -213,24 +201,19 @@ namespace Stepmania2BeatSaber
         }
         public static string FindDifficulty(string difficulty){
             switch (difficulty.Split(":")[0].Trim()){
-                case "Beginner":
-                    {
+                case "Beginner":{
                         return "Easy";
                     }
-                case "Easy":
-                    {
+                case "Easy":{
                         return "Normal";
                     }
-                case "Medium":
-                    {
+                case "Medium":{
                         return "Hard";
                     }
-                case "Hard":
-                    {
+                case "Hard":{
                         return "Expert";
                     }
-                default:
-                    {
+                default:{
                         return "";
                     }
             }
