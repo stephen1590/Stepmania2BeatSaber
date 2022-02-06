@@ -2,30 +2,26 @@
 
 namespace Stepmania2BeatSaber
 {
-    public enum LineIndex
-    {
+    public enum LineIndex{
         left,
         centerLeft,
         centerRight,
         right
     }
 
-    public enum LineLayer
-    {
+    public enum LineLayer{
         bottom,
         second,
         third,
         top
     }
 
-    public enum Type
-    {
+    public enum Type{
         red,
         blue
     }
 
-    public enum CutDirection
-    {
+    public enum CutDirection{
         up,
         down,
         left,
@@ -36,10 +32,8 @@ namespace Stepmania2BeatSaber
         downright
     }
 
-    public class Note
-    {
-        public Note()
-        {
+    public class Note{
+        public Note(){
             Time = 0;
             LineIndex = LineIndex.left;
             LineLayer = LineLayer.bottom;
@@ -51,8 +45,7 @@ namespace Stepmania2BeatSaber
         public LineLayer LineLayer { get; set; }
         public Type Type { get; set; }
         public CutDirection CutDirection { get; set; }
-        public JObject ToJOject()
-        {
+        public JObject ToJOject(){
             JObject retVal = new(new JProperty("_time", Time),
                 new JProperty("_lineIndex", LineIndex),
                 new JProperty("_lineLayer", LineLayer),
