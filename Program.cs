@@ -185,8 +185,7 @@ namespace Stepmania2BeatSaber
                                     }
                                     note.Time = baseBeats;
                                     retArray.Add(note);
-                                    if (!(c.Equals('1')))
-                                    {
+                                    if (!(c.Equals('1'))){
                                         Output("Found an unexpected note value:" + noteCharArray[count].ToString() + " - Something is wrong.", ConsoleColor.Magenta);
                                     }
                                 }
