@@ -32,8 +32,6 @@ namespace Stepmania2BeatSaber
                     var songs = ParseSong((OrderedDictionary)temp, offset, bpm);
                     WriteFile(songs);
                 }
-
-
             }
             Output("Press any key to exit...");
             Console.ReadKey();
