@@ -104,7 +104,7 @@ namespace Stepmania2BeatSaber
                             reader.ReadLine();
                             // Get Difficulty
                             string difficulty = FindDifficulty(GetNextLine(reader));
-                            int noteCount = 0;
+                            int beatcount = 0;
                             Output("//Found Difficulty - " + difficulty + " ---------------------------------", ConsoleColor.Yellow);
                             reader.ReadLine();
                             reader.ReadLine();
@@ -112,14 +112,20 @@ namespace Stepmania2BeatSaber
                             while (!reader.EndOfStream){
                                 var newDifficulty = false;
                                 // Get Noteset
-                                ArrayList noteSet = new();
+                                ArrayList measureArray = new();
                                 while (!reader.EndOfStream){
                                     line = GetNextLine(reader);
                                     if (line != null){
                                         if (!line.StartsWith(",") && !line.StartsWith(";")){
-                                            noteSet.Add(line);
-                                            noteCount += 1;
-                                            Output("Note#" + noteCount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
+                                            ArrayList beatInterval = new();
+                                            for (Int32 i = 0; i < line.Length; i++)
+                                            {
+                                                RawNote rawNote = new(line, i);
+                                                beatInterval.Add(rawNote);
+                                            }
+                                            measureArray.Add(beatInterval);
+                                            beatcount += 1;
+                                            Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                         }
                                         else{
                                             if (line.StartsWith(";"))
@@ -128,7 +134,7 @@ namespace Stepmania2BeatSaber
                                         }
                                     }
                                 }
-                                notesByDifficulty.Add(noteSet);
+                                notesByDifficulty.Add(measureArray);
                                 if (newDifficulty)
                                     break;
                             }
@@ -162,16 +168,16 @@ namespace Stepmania2BeatSaber
                 double baseBeats = 0;
                 baseBeats += offset * (bpm / 60.0);
                 if (notesByDifficulty != null){
-                    foreach (ArrayList noteSet in notesByDifficulty){
+                    foreach (ArrayList measureArray in notesByDifficulty){
                         // Default is 4 notes per measure - we may have more, so calculate the interval
-                        double interval = 4.0 / (double)noteSet.Count;
-                        foreach (string noteString in noteSet){
-                            if (noteString.Length != 4)
+                        double interval = 4.0 / (double)measureArray.Count;
+                        foreach (ArrayList beatInterval in measureArray)
+                        {
+                            if (beatInterval.Count != 4)
                                 throw new NotImplementedException("New Note Count found - expected only 4");
                             //-----------------------------
                             // split the noteset into notes
-                            char[] noteCharArray = noteString.ToCharArray();
-                            StandardNoteArray(noteCharArray, ref baseBeats, ref retArray);                        
+                            StandardNoteArray(beatInterval, ref baseBeats, ref retArray);
                             baseBeats += interval;
                         }
                     }
@@ -180,74 +186,76 @@ namespace Stepmania2BeatSaber
             }
             return retVal;
         }
-        public static void StandardNoteArray(char[] noteCharArray, ref double baseBeats, ref ArrayList retArray){
-            if (noteCharArray != null)
+        public static void StandardNoteArray(ArrayList beatInterval, ref double baseBeats, ref ArrayList retArray){
+            if (beatInterval != null)
             {
                 bool conflict = false;
-                if ((!noteCharArray[0].Equals('0') && !noteCharArray[1].Equals('0') )|| (!noteCharArray[2].Equals('0') && !noteCharArray[3].Equals('0')))
+                /*if ((!noteCharArray[0].Equals('0') && !noteCharArray[1].Equals('0') )|| (!noteCharArray[2].Equals('0') && !noteCharArray[3].Equals('0')))
                 {
                     conflict = true;
-                }
+                }*/
                 //--------------------
-                int count = 0;
-                while (count < noteCharArray.Length)
+                for (int count = 0; count < beatInterval.Count; count++)
                 {
-                    char c = noteCharArray[count];
-                    if (!(c.Equals('0')))
+                    var temp = beatInterval[count];
+                    if (temp != null)
                     {
-                        Note note = new();
-                        if (count > 1)
-                            note.Type = Type.blue;
-                        switch (count)
+                        RawNote r = (RawNote)temp;
+                        if (r.RawNoteType != RawNoteType.none)
                         {
-                            case 0:
-                                {
-                                    note.CutDirection = CutDirection.left;
-                                    note.LineIndex = LineIndex.left;
-                                    note.LineLayer = LineLayer.middle;
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    note.CutDirection = CutDirection.down;
-                                    note.LineIndex = LineIndex.centerLeft;
-                                    if (conflict)
+                            Note note = new();
+                            if (count > 1)
+                                note.Type = Type.blue;
+                            switch (count)
+                            {
+                                case 0:
                                     {
-                                        note.Type = Type.blue;
+                                        note.CutDirection = CutDirection.left;
+                                        note.LineIndex = LineIndex.left;
+                                        note.LineLayer = LineLayer.middle;
+                                        break;
                                     }
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    note.CutDirection = CutDirection.up;
-                                    note.LineIndex = LineIndex.centerRight;
-                                    note.LineLayer = LineLayer.top;
-                                    if (conflict)
+                                case 1:
                                     {
-                                        note.Type = Type.red;
+                                        note.CutDirection = CutDirection.down;
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        if (conflict)
+                                        {
+                                            note.Type = Type.blue;
+                                        }
+                                        break;
                                     }
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    note.CutDirection = CutDirection.right;
-                                    note.LineIndex = LineIndex.right;
-                                    note.LineLayer = LineLayer.middle;
-                                    break;
-                                }
-                            default:
-                                {
-                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                                }
-                        }
-                        note.Time = baseBeats;
-                        retArray.Add(note);
-                        if (!(c.Equals('1')))
-                        {
-                            Output("Found an unexpected note value:" + noteCharArray[count].ToString(), ConsoleColor.Magenta);
+                                case 2:
+                                    {
+                                        note.CutDirection = CutDirection.up;
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.top;
+                                        if (conflict)
+                                        {
+                                            note.Type = Type.red;
+                                        }
+                                        break;
+                                    }
+                                case 3:
+                                    {
+                                        note.CutDirection = CutDirection.right;
+                                        note.LineIndex = LineIndex.right;
+                                        note.LineLayer = LineLayer.middle;
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                    }
+                            }
+                            note.Time = baseBeats;
+                            retArray.Add(note);
+                            if (r.RawNoteType != RawNoteType.normal)
+                            {
+                                Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                            }
                         }
                     }
-                    count += 1;
                 }
             }
         }

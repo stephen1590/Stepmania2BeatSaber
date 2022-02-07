@@ -38,12 +38,15 @@ namespace Stepmania2BeatSaber
             LineLayer = LineLayer.bottom;
             Type = Type.red;
             CutDirection = CutDirection.left;
+            IsLeftOrRightSide = IsLeftOrRightSide.none;
         }
         public double Time { get; set; }
         public LineIndex LineIndex { get; set; }
         public LineLayer LineLayer { get; set; }
         public Type Type { get; set; }
         public CutDirection CutDirection { get; set; }
+        public IsLeftOrRightSide IsLeftOrRightSide { get; private set; }
+
         public JObject ToJOject(){
             JObject retVal = new(new JProperty("_time", Time),
                 new JProperty("_lineIndex", LineIndex),
