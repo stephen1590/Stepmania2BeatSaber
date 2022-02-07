@@ -10,15 +10,24 @@ namespace Stepmania2BeatSaber
         private static readonly string pSongName = pFilename.Split(".")[0];
         private static readonly string pChroMapperVersion = "2.2.0";
         public static void Main(){
+            double bpm = 0.0;
+            double offset = 0.0;
             OrderedDictionary hash = ReadFile();
             if (hash != null && hash.Keys.Count > 0){
-                var temp = hash["bpm"];
+                var temp = hash["offset"];
                 if (temp != null){
-                    Output("BPM Found: " + ((double)temp).ToString(), ConsoleColor.Green);
+                    offset = (double)temp;
+                    Output("Offset Found: " + offset.ToString(), ConsoleColor.Green);
+                }
+                temp = hash["bpm"];
+                if (temp != null)
+                {
+                    bpm = (double)temp;
+                    Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green);
                 }
                 temp = hash["songs"];
                 if (temp != null){
-                    var songs = ParseSong((OrderedDictionary)temp);
+                    var songs = ParseSong((OrderedDictionary)temp, offset, bpm);
                     WriteFile(songs);
                 }
 
@@ -72,6 +81,21 @@ namespace Stepmania2BeatSaber
             try{
                 using (StreamReader reader = new(filename)){
                     // Read one line from file
+                    Int32 foundItems = 0;
+                    while (reader != null && !reader.EndOfStream && !foundItems.Equals(2))
+                    {
+                        line = GetNextLine(reader);
+                        if (line != null && line.StartsWith("#OFFSET")){
+                            line = line[8..^1];
+                            retHash["offset"] = Double.Parse(line.Trim()) * -1;
+                            foundItems++;
+                        }
+                        else if (line != null && line.StartsWith("#DISPLAYBPM:")){
+                            line = line[12..^1];
+                            retHash.Add("bpm", Double.Parse(line.Trim()));
+                            foundItems++;
+                        }
+                    }
                     while (reader != null && !reader.EndOfStream){
                         line = GetNextLine(reader);
                         if (line != null && line.StartsWith("//") && line.IndexOf("dance-single") > -1){
@@ -110,11 +134,6 @@ namespace Stepmania2BeatSaber
                             }
                             playCollection.Add(difficulty, notesByDifficulty);
                         }
-                        else if (line != null && line.StartsWith("#DISPLAYBPM:")){
-                            line = line.Replace("#DISPLAYBPM:", "");
-                            line = line.Replace(";", "");
-                            retHash.Add("bpm", double.Parse(line.Trim()));
-                        }
                     }
                 }
                 retHash.Add("songs", playCollection);
@@ -124,7 +143,8 @@ namespace Stepmania2BeatSaber
             }
             return retHash;
         }
-        public static OrderedDictionary ParseSong(OrderedDictionary allData){
+        public static OrderedDictionary ParseSong(OrderedDictionary allData, double offset, double bpm)
+        {
             OrderedDictionary retVal = new();
             foreach (string key in allData.Keys){
                 Output("Creating song: " + key, ConsoleColor.Cyan);
@@ -140,57 +160,18 @@ namespace Stepmania2BeatSaber
                     }
                 ArrayList retArray = new();
                 double baseBeats = 0;
+                baseBeats += offset * (bpm / 60.0);
                 if (notesByDifficulty != null){
                     foreach (ArrayList noteSet in notesByDifficulty){
                         // Default is 4 notes per measure - we may have more, so calculate the interval
                         double interval = 4.0 / (double)noteSet.Count;
-                        if (!interval.Equals(1))
-                            Output("Found a different interval: " + interval.ToString(), ConsoleColor.Magenta);
                         foreach (string noteString in noteSet){
                             if (noteString.Length != 4)
                                 throw new NotImplementedException("New Note Count found - expected only 4");
+                            //-----------------------------
                             // split the noteset into notes
-                            int count = 0;
                             char[] noteCharArray = noteString.ToCharArray();
-                            while (count < noteString.Length){
-                                char c = noteCharArray[count];
-                                if (!(c.Equals('0'))){
-                                    Note note = new();
-                                    if (count > 1)
-                                        note.Type = Type.blue;
-                                    switch (count){
-                                        case 0:{
-                                                note.CutDirection = CutDirection.left;
-                                                note.LineIndex = LineIndex.left;
-                                                break;
-                                            }
-                                        case 1:{
-                                                note.CutDirection = CutDirection.down;
-                                                note.LineIndex = LineIndex.centerLeft;
-                                                break;
-                                            }
-                                        case 2:{
-                                                note.CutDirection = CutDirection.up;
-                                                note.LineIndex = LineIndex.centerRight;
-                                                break;
-                                            }
-                                        case 3:{
-                                                note.CutDirection = CutDirection.right;
-                                                note.LineIndex = LineIndex.right;
-                                                break;
-                                            }
-                                        default:{
-                                                throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                                            }
-                                    }
-                                    note.Time = baseBeats;
-                                    retArray.Add(note);
-                                    if (!(c.Equals('1'))){
-                                        Output("Found an unexpected note value:" + noteCharArray[count].ToString() + " - Something is wrong.", ConsoleColor.Magenta);
-                                    }
-                                }
-                                count += 1;
-                            }
+                            StandardNoteArray(noteCharArray, ref baseBeats, ref retArray);
                             baseBeats += interval;
                         }
                     }
@@ -198,6 +179,63 @@ namespace Stepmania2BeatSaber
                 }
             }
             return retVal;
+        }
+        public static void StandardNoteArray(char[] noteCharArray, ref double baseBeats, ref ArrayList retArray){
+            if (noteCharArray != null)
+            {
+                int count = 0;
+                while (count < noteCharArray.Length)
+                {
+                    char c = noteCharArray[count];
+                    if (!(c.Equals('0')))
+                    {
+                        Note note = new();
+                        if (count > 1)
+                            note.Type = Type.blue;
+                        switch (count)
+                        {
+                            case 0:
+                                {
+                                    note.CutDirection = CutDirection.left;
+                                    note.LineIndex = LineIndex.left;
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    note.CutDirection = CutDirection.down;
+                                    note.LineIndex = LineIndex.centerLeft;
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    note.CutDirection = CutDirection.up;
+                                    note.LineIndex = LineIndex.centerRight;
+                                    note.LineLayer = LineLayer.top;
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    note.CutDirection = CutDirection.right;
+                                    note.LineIndex = LineIndex.right;
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            default:
+                                {
+                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                }
+                        }
+                        note.Time = baseBeats;
+                        retArray.Add(note);
+                        if (!(c.Equals('1')))
+                        {
+                            Output("Found an unexpected note value:" + noteCharArray[count].ToString(), ConsoleColor.Magenta);
+                        }
+                    }
+                    count += 1;
+                }
+            }
         }
         public static string FindDifficulty(string difficulty){
             switch (difficulty.Split(":")[0].Trim()){

@@ -11,8 +11,7 @@ namespace Stepmania2BeatSaber
 
     public enum LineLayer{
         bottom,
-        second,
-        third,
+        middle,
         top
     }
 
