@@ -5,8 +5,10 @@ using Newtonsoft.Json.Linq;
 namespace Stepmania2BeatSaber
 {
     static class Program{
-        private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
-        private static readonly string pFilename = "BREAK DOWN!.sm";
+        //private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
+        //private static readonly string pFilename = "BREAK DOWN!.sm";
+        private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
+        private static readonly string pFilename = "Midnite Blaze.sm";
         private static readonly string pSongName = pFilename.Split(".")[0];
         private static readonly string pChroMapperVersion = "2.2.0";
         public static void Main(){
@@ -88,9 +90,9 @@ namespace Stepmania2BeatSaber
                         if (line != null && line.StartsWith("#OFFSET")){
                             line = line[8..^1];
                             retHash["offset"] = Double.Parse(line.Trim()) * -1;
-                            foundItems++;
+                            foundItems++;   
                         }
-                        else if (line != null && line.StartsWith("#DISPLAYBPM:")){
+                        else if (line != null && line.StartsWith("#BPMS")){
                             line = line[12..^1];
                             retHash.Add("bpm", Double.Parse(line.Trim()));
                             foundItems++;
@@ -171,7 +173,7 @@ namespace Stepmania2BeatSaber
                             //-----------------------------
                             // split the noteset into notes
                             char[] noteCharArray = noteString.ToCharArray();
-                            StandardNoteArray(noteCharArray, ref baseBeats, ref retArray);
+                            StandardNoteArray(noteCharArray, ref baseBeats, ref retArray);                        
                             baseBeats += interval;
                         }
                     }
@@ -183,6 +185,12 @@ namespace Stepmania2BeatSaber
         public static void StandardNoteArray(char[] noteCharArray, ref double baseBeats, ref ArrayList retArray){
             if (noteCharArray != null)
             {
+                bool conflict = false;
+                if ((!noteCharArray[0].Equals('0') && !noteCharArray[1].Equals('0') )|| (!noteCharArray[2].Equals('0') && !noteCharArray[3].Equals('0')))
+                {
+                    conflict = true;
+                }
+                //--------------------
                 int count = 0;
                 while (count < noteCharArray.Length)
                 {
@@ -205,6 +213,10 @@ namespace Stepmania2BeatSaber
                                 {
                                     note.CutDirection = CutDirection.down;
                                     note.LineIndex = LineIndex.centerLeft;
+                                    if (conflict)
+                                    {
+                                        note.Type = Type.blue;
+                                    }
                                     break;
                                 }
                             case 2:
@@ -212,6 +224,10 @@ namespace Stepmania2BeatSaber
                                     note.CutDirection = CutDirection.up;
                                     note.LineIndex = LineIndex.centerRight;
                                     note.LineLayer = LineLayer.top;
+                                    if (conflict)
+                                    {
+                                        note.Type = Type.red;
+                                    }
                                     break;
                                 }
                             case 3:
