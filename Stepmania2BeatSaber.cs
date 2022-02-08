@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
-    static class Program{
+    static class Stepmania2BeatSaber{
         private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
         private static readonly string pFilename = "BREAK DOWN!.sm";
         //private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
@@ -46,7 +46,7 @@ namespace Stepmania2BeatSaber
                 var temp = objectToWrite[key];
 
                 if (temp != null){
-                    foreach (Note note in (ArrayList)temp)
+                    foreach (BSaberNote note in (ArrayList)temp)
                         notes.Add(note.ToJOject());
                     //----------
                     JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes);
@@ -210,7 +210,7 @@ namespace Stepmania2BeatSaber
                         r = currentBeat.Get(count);
                         if (r.RawNoteType != RawNoteType.none)
                         {
-                            Note note = new();
+                            BSaberNote note = new();
                             if (count > 1)
                                 note.Type = Type.blue;
                             switch (r.RawDirection)
@@ -248,18 +248,16 @@ namespace Stepmania2BeatSaber
                                         {
                                             note.Type = Type.red;
                                             note.LineIndex = LineIndex.centerLeft;
-                                            note.LineLayer = LineLayer.middle;
                                         }
                                         else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                         {
                                             note.LineIndex = LineIndex.centerRight;
-                                            note.LineLayer = LineLayer.middle;
                                         }
                                         else
                                         {
                                             note.LineIndex = LineIndex.centerRight;
-                                            note.LineLayer = LineLayer.top;
                                         }
+                                        note.LineLayer = LineLayer.middle;
                                         note.CutDirection = CutDirection.up;
                                         break;
                                     }
@@ -301,7 +299,7 @@ namespace Stepmania2BeatSaber
                     r = currentBeat.Get(count);
                     if (r.RawNoteType != RawNoteType.none)
                     {
-                        Note note = new();
+                        BSaberNote note = new();
                         if (count > 1)
                             note.Type = Type.blue;
                         switch (r.RawDirection)

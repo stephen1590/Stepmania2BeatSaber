@@ -98,7 +98,7 @@ namespace Stepmania2BeatSaber
             else
             {
                 RawNoteType = RawNoteType.unknown;
-                Program.Output("Found a new note type: " + noteType.ToString(), ConsoleColor.Red);
+                Stepmania2BeatSaber.Output("Found a new note type: " + noteType.ToString(), ConsoleColor.Red);
             }
         }
         public IsLeftOrRightSide IsLeftOrRightSide { get; set; }

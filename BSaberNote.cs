@@ -31,8 +31,8 @@ namespace Stepmania2BeatSaber
         downright
     }
 
-    public class Note{
-        public Note(){
+    public class BSaberNote{
+        public BSaberNote(){
             Time = 0;
             LineIndex = LineIndex.left;
             LineLayer = LineLayer.bottom;
