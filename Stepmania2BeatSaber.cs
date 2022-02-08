@@ -3,13 +3,9 @@ using System.Collections.Specialized;
 
 namespace Stepmania2BeatSaber
 {
-    static class Stepmania2BeatSaber
+    public static class Stepmania2BeatSaber
     {
-        private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
-        private static readonly string pFilename = "BREAK DOWN!.sm";
-        //private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
-        //private static readonly string pFilename = "Midnite Blaze.sm";
-        private static readonly string pSongName = pFilename.Split(".")[0];
+
         private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
         {
             { GameDifficulty.unknown, 1.0 },
@@ -18,34 +14,14 @@ namespace Stepmania2BeatSaber
             { GameDifficulty.hard, 0.9 },
             { GameDifficulty.expert, 1.0 }
         };
-        public static void Main()
+        [STAThread]
+        static void Main()
         {
-            double bpm = 0.0;
-            double offset = 0.0;
-            OrderedDictionary rawDAta = GetRawNotes(pDir, pFilename);
-            if (rawDAta != null && rawDAta.Keys.Count > 0)
-            {
-                var temp = rawDAta["offset"];
-                if (temp != null)
-                {
-                    offset = (double)temp;
-                    Helper.Output("Offset Found: " + offset.ToString(), ConsoleColor.Green, DebugState.on);
-                }
-                temp = rawDAta["bpm"];
-                if (temp != null)
-                {
-                    bpm = (double)temp;
-                    Helper.Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green, DebugState.on);
-                }
-                temp = rawDAta["songs"];
-                if (temp != null)
-                {
-                    var songs = CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
-                    Helper.WriteFile(songs, pDir, pSongName);
-                }
-            }
-            Helper.Output("Press any key to exit...", DebugState.on);
-            Console.ReadKey();
+            Application.Run(new Stepmania2BeatSaberUI());
+            
+            
+            //Helper.Output("Press any key to exit...", DebugState.on);
+            //Console.ReadKey();
         }
 
 

@@ -22,7 +22,7 @@ namespace Stepmania2BeatSaber
         doubleOut,
         upDown
     }
-    internal class RawBeat
+    public class RawBeat
     {
         public ArrayList RawNoteArray;
         public int Count;
