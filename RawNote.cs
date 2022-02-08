@@ -21,8 +21,8 @@ namespace Stepmania2BeatSaber
     {
         none,
         normal,
-        three,
-        four,
+        holdStart,
+        holdEnd,
         unknown
     }
 
@@ -87,18 +87,19 @@ namespace Stepmania2BeatSaber
             {
                 RawNoteType = RawNoteType.normal;
             }
+            else if (noteType.Equals('2'))
+            {
+                RawNoteType = RawNoteType.holdStart;
+            }
             else if (noteType.Equals('3'))
             {
-                RawNoteType = RawNoteType.three;
-            }
-            else if (noteType.Equals('4'))
-            {
-                RawNoteType = RawNoteType.four;
+                RawNoteType = RawNoteType.holdStart;
             }
             else
             {
-                RawNoteType = RawNoteType.unknown;
-                Stepmania2BeatSaber.Output("Found a new note type: " + noteType.ToString(), ConsoleColor.Red);
+                //RawNoteType = RawNoteType.unknown;
+                //Stepmania2BeatSaber.Output("Found a new note type: " + noteType.ToString(), ConsoleColor.Red);
+                throw new NotSupportedException("Found a new note type: " + noteType.ToString());
             }
         }
         public IsLeftOrRightSide IsLeftOrRightSide { get; set; }
