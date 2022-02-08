@@ -194,152 +194,106 @@ namespace Stepmania2BeatSaber
             return retVal;
         }
         public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray){
-            bool isRepeat = false;
             if (currentBeat != null && previousBeat != null)
             {
-                char[] saveMask = Array.Empty<char>();
                 if (previousBeat.Mask.Equals(currentBeat.Mask))
                 {
                     //Repeat Pattern - Change it up!
-                    isRepeat = true;
-                    saveMask = currentBeat.Mask.ToCharArray();
-
+                    RepeatNoteArray(currentBeat, ref previousBeat, ref baseBeats, ref retArray);
                 }
-
-                //New Pattern
-                RawNote r;
-                for (int count = 0; count < currentBeat.Count; count++)
+                else
                 {
-                    r = currentBeat.Get(count);
-                    if (r.RawNoteType != RawNoteType.none)
+                    //New Pattern
+                    RawNote r;
+                    for (int count = 0; count < currentBeat.Count; count++)
                     {
-                        Note note = new();
-                        if (count > 1)
-                            note.Type = Type.blue;
-                        switch (r.RawDirection)
+                        r = currentBeat.Get(count);
+                        if (r.RawNoteType != RawNoteType.none)
                         {
-                            case RawDirection.left:
-                                {
-                                    if (isRepeat)
-                                    {
-                                        note.CutDirection = CutDirection.right;
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        saveMask[count] = 'o';
-                                    }
-                                    else
+                            Note note = new();
+                            if (count > 1)
+                                note.Type = Type.blue;
+                            switch (r.RawDirection)
+                            {
+                                case RawDirection.left:
                                     {
                                         note.CutDirection = CutDirection.left;
                                         note.LineIndex = LineIndex.left;
-                                    }
-                                    note.LineLayer = LineLayer.middle;
-                                    break;
-                                }
-                            case RawDirection.down:
-                                {
-                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
-                                    {
-                                        note.Type = Type.blue;
-                                        note.LineIndex = LineIndex.centerRight;
                                         note.LineLayer = LineLayer.middle;
+                                        break;
                                     }
-                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                case RawDirection.down:
                                     {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else
-                                    {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                    }
-                                    //----------------
-                                    if (isRepeat)
-                                    {
-                                        note.CutDirection = CutDirection.up;
-                                        note.LineLayer = LineLayer.middle;
-                                        saveMask[count] = 'x';
-                                    }
-                                    else
-                                    {
+                                        if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                        {
+                                            note.Type = Type.blue;
+                                            note.LineIndex = LineIndex.centerRight;
+                                            note.LineLayer = LineLayer.middle;
+                                        }
+                                        else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                        {
+                                            note.LineIndex = LineIndex.centerLeft;
+                                            note.LineLayer = LineLayer.middle;
+                                        }
+                                        else
+                                        {
+                                            note.LineIndex = LineIndex.centerLeft;
+                                        }
                                         note.CutDirection = CutDirection.down;
+                                        break;
                                     }
-                                    break;
-                                }
-                            case RawDirection.up:
-                                {
-                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                case RawDirection.up:
                                     {
-                                        note.Type = Type.red;
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
-                                    {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else
-                                    {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.top;
-                                    }
-                                    //----------------
-                                    if (isRepeat)
-                                    {
-                                        note.CutDirection = CutDirection.down;
-                                        note.LineLayer = LineLayer.middle;
-                                        saveMask[count] = 'x';
-                                    }
-                                    else
-                                    {
+                                        if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                        {
+                                            note.Type = Type.red;
+                                            note.LineIndex = LineIndex.centerLeft;
+                                            note.LineLayer = LineLayer.middle;
+                                        }
+                                        else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                        {
+                                            note.LineIndex = LineIndex.centerRight;
+                                            note.LineLayer = LineLayer.middle;
+                                        }
+                                        else
+                                        {
+                                            note.LineIndex = LineIndex.centerRight;
+                                            note.LineLayer = LineLayer.top;
+                                        }
                                         note.CutDirection = CutDirection.up;
-
+                                        break;
                                     }
-                                    break;
-                                }
-                            case RawDirection.right:
-                                {
-                                    if (isRepeat)
-                                    {
-                                        note.CutDirection = CutDirection.left;
-                                        note.LineIndex = LineIndex.centerRight;
-                                        saveMask[count] = 'o';
-                                    }
-                                    else
+                                case RawDirection.right:
                                     {
                                         note.CutDirection = CutDirection.right;
                                         note.LineIndex = LineIndex.right;
+                                        note.LineLayer = LineLayer.middle;
+                                        break;
                                     }
-                                    note.LineLayer = LineLayer.middle;
-                                    break;
-                                }
-                            default:
-                                {
-                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                                }
-                        }
-                        note.Time = baseBeats;
-                        retArray.Add(note);
-                        if (r.RawNoteType != RawNoteType.normal)
-                        {
-                            Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                                default:
+                                    {
+                                        throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                    }
+                            }
+                            note.Time = baseBeats;
+                            retArray.Add(note);
+                            if (r.RawNoteType != RawNoteType.normal)
+                            {
+                                Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                            }
                         }
                     }
-                }
-                //--- set the new beat
-                if (!currentBeat.Mask.Equals("0000") || isRepeat)
-                {
-                    if (isRepeat)
+                    //--- set the new beat
+                    if (!currentBeat.Mask.Equals("0000"))
                     {
-                       currentBeat.Mask = new String(saveMask);
+                        previousBeat = currentBeat;
                     }
-                    previousBeat = currentBeat;
                 }
             }
         }
         public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
         {
-                char[] saveMask = Array.Empty<char>();
-                saveMask = currentBeat.Mask.ToCharArray();
+                char[] saveMask = currentBeat.Mask.ToCharArray();
                 //New Pattern
                 RawNote r;
                 for (int count = 0; count < currentBeat.Count; count++)

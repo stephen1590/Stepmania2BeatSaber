@@ -14,6 +14,12 @@ namespace Stepmania2BeatSaber
         verticalSplit,
         repeatConflict
     }
+    public enum ExceptionMask
+    {
+        none,
+        doubleOut,
+        upDown
+    }
     internal class RawBeat
     {
         public ArrayList RawNoteArray;
@@ -21,11 +27,16 @@ namespace Stepmania2BeatSaber
         public string Mask;
         public bool HasConflict;
         public ConflictType ConflictType;
-        private static readonly Dictionary<string, ConflictType> conflictMasks = new()
+        private static readonly Dictionary<string, ConflictType> ConflictMasks = new()
         {
             { "XX00", ConflictType.doubleHandConflict },
             { "00XX", ConflictType.doubleHandConflict },
             { "0XX0", ConflictType.verticalSplit }
+        };
+        private static readonly Dictionary<string, ExceptionMask> ExceptionMasks = new()
+        {
+            { "X00X", ExceptionMask.doubleOut },
+            { "0XX0", ExceptionMask.upDown },
         };
         public RawBeat()
         {
@@ -91,9 +102,9 @@ namespace Stepmania2BeatSaber
         }
         private void CheckConflicts()
         {
-            if (conflictMasks.ContainsKey(Mask))
+            if (ConflictMasks.ContainsKey(Mask))
             {
-                ConflictType= conflictMasks[Mask];
+                ConflictType= ConflictMasks[Mask];
                 HasConflict = true;
             }
             else
