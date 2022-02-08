@@ -14,7 +14,7 @@ namespace Stepmania2BeatSaber
         verticalSplit,
         repeatConflict
     }
-    public enum ExceptionMask
+    public enum RepeatException
     {
         none,
         doubleOut,
@@ -27,6 +27,7 @@ namespace Stepmania2BeatSaber
         public string Mask;
         public bool HasConflict;
         public ConflictType ConflictType;
+        public RepeatException RepeatException;
         public double BeatTime { get; set; }
         private static readonly Dictionary<string, ConflictType> ConflictMasks = new()
         {
@@ -34,10 +35,10 @@ namespace Stepmania2BeatSaber
             { "00XX", ConflictType.doubleHandConflict },
             { "0XX0", ConflictType.verticalSplit }
         };
-        private static readonly Dictionary<string, ExceptionMask> ExceptionMasks = new()
+        private static readonly Dictionary<string, RepeatException> RepeatMasks = new()
         {
-            { "X00X", ExceptionMask.doubleOut },
-            { "0XX0", ExceptionMask.upDown },
+            { "X00X", RepeatException.doubleOut },
+            { "0XX0", RepeatException.upDown },
         };
         public RawBeat()
         {
@@ -54,7 +55,7 @@ namespace Stepmania2BeatSaber
             Count = rawNoteArray.Count;
             Mask = GetMask(rawNoteArray);
             BeatTime = bTime;
-            CheckConflicts();
+            CheckConflictsAndExceptions();
         }
         public void Add(RawNote note)
         {
@@ -63,7 +64,7 @@ namespace Stepmania2BeatSaber
             Mask += GetNoteMask(note);
             if (RawNoteArray.Count > 3)
             {
-                CheckConflicts();
+                CheckConflictsAndExceptions();
             }
         }
         public RawNote Get(int index)
@@ -103,7 +104,7 @@ namespace Stepmania2BeatSaber
             else
                 return "0000";
         }
-        private void CheckConflicts()
+        private void CheckConflictsAndExceptions()
         {
             if (ConflictMasks.ContainsKey(Mask))
             {
@@ -113,6 +114,17 @@ namespace Stepmania2BeatSaber
             else
             {
                 ConflictType = ConflictType.none;
+                HasConflict = false;
+            }
+            //---------------------------------------
+            if (RepeatMasks.ContainsKey(Mask))
+            {
+                RepeatException = RepeatMasks[Mask];
+                HasConflict = true;
+            }
+            else
+            {
+                RepeatException = RepeatException.none;
                 HasConflict = false;
             }
         }

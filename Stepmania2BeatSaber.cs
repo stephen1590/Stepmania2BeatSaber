@@ -382,75 +382,88 @@ namespace Stepmania2BeatSaber
                     BSaberNote note = new();
                     if (count > 1)
                         note.NoteType = NoteType.blue;
-                    switch (r.RawDirection)
+                    //------------------------
+                    if (currentBeat.RepeatException != RepeatException.none)
                     {
-                        case RawDirection.left:
-                            {
-                                note.CutDirection = CutDirection.right;
-                                note.LineIndex = LineIndex.centerLeft;
-                                saveMask[count] = 'o';
-                                note.LineLayer = LineLayer.middle;
-                                break;
-                            }
-                        case RawDirection.down:
-                            {
-                                if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                        if (currentBeat.RepeatException == RepeatException.doubleOut)
+                        {
+                            RepeatExceptionsHandle_DoubleOut(ref r, ref note, ref saveMask, ref count);
+                        }
+                        else if (currentBeat.RepeatException == RepeatException.upDown)
+                        {
+                            RepeatExceptionsHandle_UpDown(ref r, ref note, ref saveMask, ref count);
+                        }
+                    }
+                    else { 
+                        switch (r.RawDirection)
+                        {
+                            case RawDirection.left:
                                 {
-                                    note.NoteType = NoteType.blue;
-                                    note.LineIndex = LineIndex.centerRight;
-                                    note.LineLayer = LineLayer.middle;
-                                }
-                                else if (currentBeat.ConflictType == ConflictType.verticalSplit)
-                                {
+                                    note.CutDirection = CutDirection.right;
                                     note.LineIndex = LineIndex.centerLeft;
+                                    saveMask[count] = 'o';
                                     note.LineLayer = LineLayer.middle;
+                                    break;
                                 }
-                                else
+                            case RawDirection.down:
                                 {
-                                    note.LineIndex = LineIndex.centerLeft;
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                    {
+                                        note.NoteType = NoteType.blue;
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.bottom;
+                                    }
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    note.CutDirection = CutDirection.up;
+                                    saveMask[count] = 'x';
+                                    break;
                                 }
-                                note.CutDirection = CutDirection.up;
-                                note.LineLayer = LineLayer.middle;
-                                saveMask[count] = 'x';
-                                break;
-                            }
-                        case RawDirection.up:
-                            {
-                                if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                            case RawDirection.up:
                                 {
-                                    note.NoteType = NoteType.red;
-                                    note.LineIndex = LineIndex.centerLeft;
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                    {
+                                        note.NoteType = NoteType.red;
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.top;
+                                    }
+                                    //----------------
+                                    note.CutDirection = CutDirection.down;
                                     note.LineLayer = LineLayer.middle;
+                                    saveMask[count] = 'x';
+                                    break;
                                 }
-                                else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                            case RawDirection.right:
                                 {
+                                    note.CutDirection = CutDirection.left;
                                     note.LineIndex = LineIndex.centerRight;
+                                    saveMask[count] = 'o';
                                     note.LineLayer = LineLayer.middle;
+                                    break;
                                 }
-                                else
+                            default:
                                 {
-                                    note.LineIndex = LineIndex.centerRight;
-                                    note.LineLayer = LineLayer.top;
+                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
                                 }
-                                //----------------
-                                note.CutDirection = CutDirection.down;
-                                note.LineLayer = LineLayer.middle;
-                                saveMask[count] = 'x';
-                                break;
-                            }
-                        case RawDirection.right:
-                            {
-                                note.CutDirection = CutDirection.left;
-                                note.LineIndex = LineIndex.centerRight;
-                                saveMask[count] = 'o';
-
-                                note.LineLayer = LineLayer.middle;
-                                break;
-                            }
-                        default:
-                            {
-                                throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                            }
+                        }
                     }
                     note.Time = currentBeat.BeatTime;
                     retArray.Add(note);
@@ -467,7 +480,73 @@ namespace Stepmania2BeatSaber
                 previousBeat = currentBeat;
             }
         }
-       
+        public static void RepeatExceptionsHandle_DoubleOut(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
+        {
+            switch (r.RawDirection)
+            {
+                case RawDirection.left:
+                    {
+                        note.CutDirection = CutDirection.down;
+                        note.LineIndex = LineIndex.centerLeft;
+                        saveMask[count] = 'o';
+                        note.LineLayer = LineLayer.bottom;
+                        break;
+                    }
+                case RawDirection.down:
+                    {
+                        throw new NotSupportedException("Shouldn't have this case.");
+                    }
+                case RawDirection.up:
+                    {
+                        throw new NotSupportedException("Shouldn't have this case.");
+                    }
+                case RawDirection.right:
+                    {
+                        note.CutDirection = CutDirection.down;
+                        note.LineIndex = LineIndex.centerRight;
+                        saveMask[count] = 'o';
+                        note.LineLayer = LineLayer.bottom;
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                    }
+            }
+        }
+        public static void RepeatExceptionsHandle_UpDown(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
+        {
+            switch (r.RawDirection)
+            {
+                case RawDirection.left:
+                    {
+                        throw new NotSupportedException("Shouldn't have this case.");
+                    }
+                case RawDirection.down:
+                    {
+                        note.LineIndex = LineIndex.centerLeft;
+                        note.CutDirection = CutDirection.up;
+                        saveMask[count] = 'x';
+                        break;
+                    }
+                case RawDirection.up:
+                    {
+                        note.LineIndex = LineIndex.centerRight;
+                        note.CutDirection = CutDirection.down;
+                        note.LineLayer = LineLayer.middle;
+                        saveMask[count] = 'x';
+                        break;
+                    }
+                case RawDirection.right:
+                    {
+                        throw new NotSupportedException("Shouldn't have this case.");
+                    }
+                default:
+                    {
+                        throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                    }
+            }
+        }
     }
     public enum GameDifficulty
     {
