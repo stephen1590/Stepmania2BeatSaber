@@ -2,13 +2,6 @@
 
 namespace Stepmania2BeatSaber
 {
-    public enum IsLeftOrRightSide
-    {
-        none,
-        left,
-        right
-    }
-
     public enum RawDirection
     {
         none,
@@ -37,9 +30,9 @@ namespace Stepmania2BeatSaber
         public RawNote(string noteString, Int32 index)
         {
             char noteType = '0';
-            if(noteString != null)
+            if (noteString != null)
             {
-                noteType= noteString[index];
+                noteType = noteString[index];
             }
             DetermineRawNoteType(noteType);
             if (RawNoteType != RawNoteType.none)
@@ -79,7 +72,7 @@ namespace Stepmania2BeatSaber
         }
         private void DetermineRawNoteType(char noteType)
         {
-            if(noteType.Equals('0'))
+            if (noteType.Equals('0'))
             {
                 RawNoteType = RawNoteType.none;
             }
@@ -105,5 +98,5 @@ namespace Stepmania2BeatSaber
         public IsLeftOrRightSide IsLeftOrRightSide { get; set; }
         public RawDirection RawDirection { get; set; }
         public RawNoteType RawNoteType { get; set; }
-}
+    }
 }

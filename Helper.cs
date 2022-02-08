@@ -7,6 +7,32 @@ namespace Stepmania2BeatSaber
     static internal class Helper
     {
         private static readonly string pChroMapperVersion = "2.2.0";
+        public static GameDifficulty FindDifficulty(string difficulty)
+        {
+            switch (difficulty.Split(":")[0].Trim())
+            {
+                case "Beginner":
+                    {
+                        return GameDifficulty.easy;
+                    }
+                case "Easy":
+                    {
+                        return GameDifficulty.normal;
+                    }
+                case "Medium":
+                    {
+                        return GameDifficulty.hard;
+                    }
+                case "Hard":
+                    {
+                        return GameDifficulty.expert;
+                    }
+                default:
+                    {
+                        return GameDifficulty.unknown;
+                    }
+            }
+        }
         public static string GameDifficultyToString(GameDifficulty difficulty)
         {
             switch (difficulty)
@@ -73,6 +99,7 @@ namespace Stepmania2BeatSaber
             }
             catch
             {
+                Output("Unable to get next line from reader", ConsoleColor.Red);
                 return "";
             }
         }

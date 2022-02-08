@@ -58,7 +58,7 @@ namespace Stepmania2BeatSaber
             RawNoteArray.Add(note);
             Count++;
             Mask += GetNoteMask(note);
-            if(RawNoteArray.Count > 3)
+            if (RawNoteArray.Count > 3)
             {
                 CheckConflicts();
             }
@@ -104,7 +104,7 @@ namespace Stepmania2BeatSaber
         {
             if (ConflictMasks.ContainsKey(Mask))
             {
-                ConflictType= ConflictMasks[Mask];
+                ConflictType = ConflictMasks[Mask];
                 HasConflict = true;
             }
             else

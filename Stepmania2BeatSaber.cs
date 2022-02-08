@@ -4,7 +4,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
-    static class Stepmania2BeatSaber{
+    static class Stepmania2BeatSaber
+    {
         //private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
         //private static readonly string pFilename = "BREAK DOWN!.sm";
         private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
@@ -12,19 +13,22 @@ namespace Stepmania2BeatSaber
         private static readonly string pSongName = pFilename.Split(".")[0];
         private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
         {
-            { GameDifficulty.unknown, 1.0},
+            { GameDifficulty.unknown, 1.0 },
             { GameDifficulty.easy, 0.5 },
             { GameDifficulty.normal, 0.7 },
             { GameDifficulty.hard, 0.9 },
             { GameDifficulty.expert, 1.0 }
         };
-        public static void Main(){
+        public static void Main()
+        {
             double bpm = 0.0;
             double offset = 0.0;
             OrderedDictionary rawDAta = GetRawNotes(pDir, pFilename);
-            if (rawDAta != null && rawDAta.Keys.Count > 0){
+            if (rawDAta != null && rawDAta.Keys.Count > 0)
+            {
                 var temp = rawDAta["offset"];
-                if (temp != null){
+                if (temp != null)
+                {
                     offset = (double)temp;
                     Helper.Output("Offset Found: " + offset.ToString(), ConsoleColor.Green);
                 }
@@ -35,7 +39,8 @@ namespace Stepmania2BeatSaber
                     Helper.Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green);
                 }
                 temp = rawDAta["songs"];
-                if (temp != null){
+                if (temp != null)
+                {
                     var songs = CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
                     Helper.WriteFile(songs, pDir, pSongName);
                 }
@@ -45,52 +50,63 @@ namespace Stepmania2BeatSaber
         }
 
 
-        public static OrderedDictionary GetRawNotes(string directory, string fn){
+        public static OrderedDictionary GetRawNotes(string directory, string fn)
+        {
             Helper.Output("Reading data...", ConsoleColor.Cyan);
             OrderedDictionary playCollection = new();
             OrderedDictionary retHash = new();
             string line;
             string filename = directory + @"\" + fn;
-            try{
-                using (StreamReader reader = new(filename)){
+            try
+            {
+                using (StreamReader reader = new(filename))
+                {
                     // Read one line from file
                     Int32 foundItems = 0;
                     while (reader != null && !reader.EndOfStream && !foundItems.Equals(2))
                     {
                         line = Helper.GetNextLine(reader);
-                        if (line != null && line.StartsWith("#OFFSET")){
+                        if (line != null && line.StartsWith("#OFFSET"))
+                        {
                             line = line[8..^1];
                             retHash["offset"] = Double.Parse(line.Trim()) * -1;
-                            foundItems++;   
+                            foundItems++;
                         }
-                        else if (line != null && line.StartsWith("#BPMS")){
+                        else if (line != null && line.StartsWith("#BPMS"))
+                        {
                             line = line[12..^1];
                             retHash.Add("bpm", Double.Parse(line.Trim()));
                             foundItems++;
                         }
                     }
-                    while (reader != null && !reader.EndOfStream){
+                    while (reader != null && !reader.EndOfStream)
+                    {
                         line = Helper.GetNextLine(reader);
-                        if (line != null && line.StartsWith("//") && line.IndexOf("dance-single") > -1){
+                        if (line != null && line.StartsWith("//") && line.IndexOf("dance-single") > -1)
+                        {
                             reader.ReadLine();
                             reader.ReadLine();
                             reader.ReadLine();
                             // Get Difficulty
-                            GameDifficulty difficulty = FindDifficulty(Helper.GetNextLine(reader));
+                            GameDifficulty difficulty = Helper.FindDifficulty(Helper.GetNextLine(reader));
                             int beatcount = 0;
                             Helper.Output("//Found Difficulty - " + Helper.GameDifficultyToString(difficulty) + " ---------------------------------", ConsoleColor.Yellow);
                             reader.ReadLine();
                             reader.ReadLine();
                             ArrayList notesByDifficulty = new();
-                            while (!reader.EndOfStream){
-                                var newDifficulty = false;
+                            while (!reader.EndOfStream)
+                            {
+                                bool newDifficulty = false;
                                 // Get Noteset
                                 ArrayList measure = new();
-                                while (!reader.EndOfStream){
+                                while (!reader.EndOfStream)
+                                {
                                     line = Helper.GetNextLine(reader);
-                                    if (line != null){
-                                        if (!line.StartsWith(",") && !line.StartsWith(";")){
-                                            RawBeat currentBeat = new ();
+                                    if (line != null)
+                                    {
+                                        if (!line.StartsWith(",") && !line.StartsWith(";"))
+                                        {
+                                            RawBeat currentBeat = new();
                                             for (Int32 i = 0; i < line.Length; i++)
                                             {
                                                 RawNote rawNote = new(line, i);
@@ -100,7 +116,8 @@ namespace Stepmania2BeatSaber
                                             beatcount += 1;
                                             Helper.Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                         }
-                                        else{
+                                        else
+                                        {
                                             if (line.StartsWith(";"))
                                                 newDifficulty = true;
                                             break;
@@ -117,7 +134,8 @@ namespace Stepmania2BeatSaber
                 }
                 retHash.Add("songs", playCollection);
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 Helper.Output("Error reading file. " + Environment.NewLine + ex.Message, ConsoleColor.Red);
             }
             return retHash;
@@ -125,16 +143,19 @@ namespace Stepmania2BeatSaber
         public static OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
-            foreach (GameDifficulty key in allData.Keys){
+            foreach (GameDifficulty key in allData.Keys)
+            {
                 Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan);
                 ArrayList notesByDifficulty = new();
                 if (allData != null && allData[key] != null)
-                    try{
+                    try
+                    {
                         var temp = allData[key];
                         if (temp != null)
                             notesByDifficulty = (ArrayList)temp;
                     }
-                    catch{
+                    catch
+                    {
                         notesByDifficulty = new();
                     }
                 ArrayList retArray = new();
@@ -142,9 +163,11 @@ namespace Stepmania2BeatSaber
                 double baseBeats = 0;
                 //Set the base beats + account for offset + scale with difficulty
                 baseBeats += offset * (bpm / 60.0);
-                if (notesByDifficulty != null){
+                if (notesByDifficulty != null)
+                {
                     RawBeat previousBeat = new();
-                    foreach (ArrayList measure in notesByDifficulty){
+                    foreach (ArrayList measure in notesByDifficulty)
+                    {
                         // Default is 4 notes per currentBeat - we may have more, so calculate the interval
                         double interval = 4.0 / (double)measure.Count;
                         RawBeat currentBeat = new();
@@ -168,7 +191,8 @@ namespace Stepmania2BeatSaber
             }
             return retVal;
         }
-        public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray){
+        public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
+        {
             if (currentBeat != null && previousBeat != null)
             {
                 //making this throw an error so I fucking read it... dog damnit morty
@@ -190,7 +214,7 @@ namespace Stepmania2BeatSaber
                             {
                                 BSaberNote note = new();
                                 if (count > 1)
-                                    note.Type = Type.blue;
+                                    note.NoteType = NoteType.blue;
                                 switch (r.RawDirection)
                                 {
                                     case RawDirection.left:
@@ -204,7 +228,7 @@ namespace Stepmania2BeatSaber
                                         {
                                             if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                             {
-                                                note.Type = Type.blue;
+                                                note.NoteType = NoteType.blue;
                                                 note.LineIndex = LineIndex.centerRight;
                                                 note.LineLayer = LineLayer.middle;
                                             }
@@ -224,7 +248,7 @@ namespace Stepmania2BeatSaber
                                         {
                                             if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                             {
-                                                note.Type = Type.red;
+                                                note.NoteType = NoteType.red;
                                                 note.LineIndex = LineIndex.centerLeft;
                                             }
                                             else if (currentBeat.ConflictType == ConflictType.verticalSplit)
@@ -262,7 +286,7 @@ namespace Stepmania2BeatSaber
                             {
                                 ObstaclesAsNoteArray(currentBeat, ref baseBeats, ref retArray);
                             }
-                        }   
+                        }
                     }
                     //--- set the new beat
                     if (!currentBeat.Mask.Equals("0000"))
@@ -280,121 +304,103 @@ namespace Stepmania2BeatSaber
         }
         public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
         {
-                char[] saveMask = currentBeat.Mask.ToCharArray();
-                //New Pattern
-                RawNote r;
-                for (int count = 0; count < currentBeat.Count; count++)
+            char[] saveMask = currentBeat.Mask.ToCharArray();
+            //New Pattern
+            RawNote r;
+            for (int count = 0; count < currentBeat.Count; count++)
+            {
+                r = currentBeat.Get(count);
+                if (r.RawNoteType != RawNoteType.none)
                 {
-                    r = currentBeat.Get(count);
-                    if (r.RawNoteType != RawNoteType.none)
+                    BSaberNote note = new();
+                    if (count > 1)
+                        note.NoteType = NoteType.blue;
+                    switch (r.RawDirection)
                     {
-                        BSaberNote note = new();
-                        if (count > 1)
-                            note.Type = Type.blue;
-                        switch (r.RawDirection)
-                        {
-                            case RawDirection.left:
+                        case RawDirection.left:
+                            {
+                                note.CutDirection = CutDirection.right;
+                                note.LineIndex = LineIndex.centerLeft;
+                                saveMask[count] = 'o';
+                                note.LineLayer = LineLayer.middle;
+                                break;
+                            }
+                        case RawDirection.down:
+                            {
+                                if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                 {
-                                    note.CutDirection = CutDirection.right;
-                                    note.LineIndex = LineIndex.centerLeft;
-                                    saveMask[count] = 'o';
-                                    note.LineLayer = LineLayer.middle;
-                                    break;
-                                }
-                            case RawDirection.down:
-                                {
-                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
-                                    {
-                                        note.Type = Type.blue;
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
-                                    {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else
-                                    {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                    }
-                                    note.CutDirection = CutDirection.up;
-                                    note.LineLayer = LineLayer.middle;
-                                    saveMask[count] = 'x';
-                                    break;
-                                }
-                            case RawDirection.up:
-                                {
-                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
-                                    {
-                                        note.Type = Type.red;
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
-                                    {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.middle;
-                                    }
-                                    else
-                                    {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.top;
-                                    }
-                                    //----------------
-                                    note.CutDirection = CutDirection.down;
-                                    note.LineLayer = LineLayer.middle;
-                                    saveMask[count] = 'x';
-                                    break;
-                                }
-                            case RawDirection.right:
-                                {
-                                    note.CutDirection = CutDirection.left;
+                                    note.NoteType = NoteType.blue;
                                     note.LineIndex = LineIndex.centerRight;
-                                    saveMask[count] = 'o';
-                                    
                                     note.LineLayer = LineLayer.middle;
-                                    break;
                                 }
-                            default:
+                                else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                 {
-                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                    note.LineIndex = LineIndex.centerLeft;
+                                    note.LineLayer = LineLayer.middle;
                                 }
-                        }
-                        note.Time = baseBeats;
-                        retArray.Add(note);
-                        if (r.RawNoteType != RawNoteType.normal)
-                        {
-                            Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
-                        }
+                                else
+                                {
+                                    note.LineIndex = LineIndex.centerLeft;
+                                }
+                                note.CutDirection = CutDirection.up;
+                                note.LineLayer = LineLayer.middle;
+                                saveMask[count] = 'x';
+                                break;
+                            }
+                        case RawDirection.up:
+                            {
+                                if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                {
+                                    note.NoteType = NoteType.red;
+                                    note.LineIndex = LineIndex.centerLeft;
+                                    note.LineLayer = LineLayer.middle;
+                                }
+                                else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                {
+                                    note.LineIndex = LineIndex.centerRight;
+                                    note.LineLayer = LineLayer.middle;
+                                }
+                                else
+                                {
+                                    note.LineIndex = LineIndex.centerRight;
+                                    note.LineLayer = LineLayer.top;
+                                }
+                                //----------------
+                                note.CutDirection = CutDirection.down;
+                                note.LineLayer = LineLayer.middle;
+                                saveMask[count] = 'x';
+                                break;
+                            }
+                        case RawDirection.right:
+                            {
+                                note.CutDirection = CutDirection.left;
+                                note.LineIndex = LineIndex.centerRight;
+                                saveMask[count] = 'o';
+
+                                note.LineLayer = LineLayer.middle;
+                                break;
+                            }
+                        default:
+                            {
+                                throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                            }
+                    }
+                    note.Time = baseBeats;
+                    retArray.Add(note);
+                    if (r.RawNoteType != RawNoteType.normal)
+                    {
+                        Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
                     }
                 }
-                //--- set the new beat
-                if (!currentBeat.Mask.Equals("0000"))
-                {
-                    currentBeat.Mask = new String(saveMask);
-                    previousBeat = currentBeat;
-                }
-        }
-        public static GameDifficulty FindDifficulty(string difficulty){
-            switch (difficulty.Split(":")[0].Trim()){
-                case "Beginner":{
-                        return GameDifficulty.easy;
-                    }
-                case "Easy":{
-                        return GameDifficulty.normal;
-                    }
-                case "Medium":{
-                        return GameDifficulty.hard;
-                    }
-                case "Hard":{
-                        return GameDifficulty.expert;
-                    }
-                default:{
-                        return GameDifficulty.unknown;
-                    }
+            }
+            //--- set the new beat
+            if (!currentBeat.Mask.Equals("0000"))
+            {
+                currentBeat.Mask = new String(saveMask);
+                previousBeat = currentBeat;
             }
         }
+       
     }
     public enum GameDifficulty
     {
