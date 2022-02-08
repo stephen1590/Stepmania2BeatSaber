@@ -36,7 +36,7 @@ namespace Stepmania2BeatSaber
                 }
                 temp = rawDAta["songs"];
                 if (temp != null){
-                    var songs = ParseSong((OrderedDictionary)temp, offset, bpm);
+                    var songs = CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
                     Helper.WriteFile(songs, pDir, pSongName);
                 }
             }
@@ -122,7 +122,7 @@ namespace Stepmania2BeatSaber
             }
             return retHash;
         }
-        public static OrderedDictionary ParseSong(OrderedDictionary allData, double offset, double bpm)
+        public static OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
             foreach (GameDifficulty key in allData.Keys){
