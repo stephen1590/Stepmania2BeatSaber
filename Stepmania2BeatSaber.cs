@@ -1,15 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
-using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
     static class Stepmania2BeatSaber
     {
-        //private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
-        //private static readonly string pFilename = "BREAK DOWN!.sm";
-        private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
-        private static readonly string pFilename = "Midnite Blaze.sm";
+        private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
+        private static readonly string pFilename = "BREAK DOWN!.sm";
+        //private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
+        //private static readonly string pFilename = "Midnite Blaze.sm";
         private static readonly string pSongName = pFilename.Split(".")[0];
         private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
         {
@@ -147,30 +146,27 @@ namespace Stepmania2BeatSaber
             {
                 Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
-                if (allData != null && allData[key] != null)
-                    try
-                    {
-                        var temp = allData[key];
-                        if (temp != null)
-                            notesByDifficulty = (ArrayList)temp;
-                    }
-                    catch
-                    {
-                        notesByDifficulty = new();
-                    }
-                ArrayList retArray = new();
-                ArrayList obstArray = new();
+                ArrayList rawBeatsArray = new();
+                OrderedDictionary songData = new();
                 double baseBeats = 0;
                 //Set the base beats + account for offset + scale with difficulty
                 baseBeats += offset * (bpm / 60.0);
+                //------------------------
+                if (allData != null && allData[key] != null)
+                { 
+                    var temp = allData[key];
+                    if (temp != null)
+                        notesByDifficulty = (ArrayList)temp;
+                }
+                //Remove the measures and calculate the interval
                 if (notesByDifficulty != null)
                 {
-                    RawBeat previousBeat = new();
                     foreach (ArrayList measure in notesByDifficulty)
                     {
                         // Default is 4 notes per currentBeat - we may have more, so calculate the interval
                         double interval = 4.0 / (double)measure.Count;
                         RawBeat currentBeat = new();
+                        // split the measure into invididual notes/beats
                         for (int i = 0; i < measure.Count; i++)
                         {
                             var temp = measure[i];
@@ -179,27 +175,36 @@ namespace Stepmania2BeatSaber
                                 currentBeat = (RawBeat)temp;
                                 if (currentBeat.Count != 4)
                                     throw new NotImplementedException("New Note Count found - expected only 4");
-                                //-----------------------------
-                                // split the measure into invididual notes/beats
-                                StandardNoteArray(currentBeat, ref previousBeat, ref baseBeats, ref retArray);
+                                //Save the interval -----------------------------
+                                currentBeat.BeatTime = baseBeats;
+                                rawBeatsArray.Add(currentBeat);
                                 baseBeats += interval;
                             }
                         }
                     }
-                    retVal.Add(key, retArray);
                 }
+                
+                ArrayList retArray = StandardNoteArray(rawBeatsArray);
+                songData.Add("notes", retArray);
+                //-----------
+                ArrayList obstArray = ObstaclesArray(rawBeatsArray);
+                songData.Add("obstacles", obstArray);
+                //-----------
+                retVal.Add(key, songData);
             }
             return retVal;
         }
-        public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
+        public static ArrayList StandardNoteArray(ArrayList rawBeatsArray)
         {
-            if (currentBeat != null && previousBeat != null)
+            RawBeat previousBeat = new();
+            ArrayList retArray = new();
+            foreach (RawBeat currentBeat in rawBeatsArray)
             {
                 //making this throw an error so I fucking read it... dog damnit morty
                 if (previousBeat.Mask.Equals(currentBeat.Mask))
                 {
                     //Repeat Pattern - Change it up!
-                    RepeatNoteArray(currentBeat, ref previousBeat, ref baseBeats, ref retArray);
+                    RepeatNoteArray(currentBeat, ref previousBeat, ref retArray);
                 }
                 else
                 {
@@ -275,16 +280,12 @@ namespace Stepmania2BeatSaber
                                             throw new NotImplementedException("Too many notes. Something is critically wrong.");
                                         }
                                 }
-                                note.Time = baseBeats;
+                                note.Time = currentBeat.BeatTime;
                                 retArray.Add(note);
-                                if (r.RawNoteType != RawNoteType.normal)
+                                if (r.RawNoteType != RawNoteType.normal && r.RawNoteType != RawNoteType.holdStart && r.RawNoteType != RawNoteType.holdEnd)
                                 {
                                     Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta, DebugState.on);
                                 }
-                            }
-                            else if (r.RawNoteType == RawNoteType.holdStart || r.RawNoteType == RawNoteType.holdEnd)
-                            {
-                                ObstaclesAsNoteArray(currentBeat, ref baseBeats, ref retArray);
                             }
                         }
                     }
@@ -295,14 +296,80 @@ namespace Stepmania2BeatSaber
                     }
                 }
             }
+            return retArray;
         }
-        public static void ObstaclesAsNoteArray(RawBeat currentBeat, ref double baseBeats, ref ArrayList retArray)
+        public static ArrayList ObstaclesArray(ArrayList rawBeatsArray)
         {
-            if (currentBeat != null)
+            ArrayList obstArray = new();
+            if (rawBeatsArray != null)
             {
+                BSaberObstacle oLeft = new();
+                BSaberObstacle oCenterLeft = new();
+                BSaberObstacle oCenterRight = new();
+                BSaberObstacle oRight = new();
+                BSaberObstacle o = new();
+                foreach (RawBeat b in rawBeatsArray)
+                {
+                    foreach (RawNote r in b.RawNoteArray)
+                    {
+                        if (r.RawNoteType == RawNoteType.holdStart || r.RawNoteType == RawNoteType.holdEnd)
+                        {
+                            if(r.RawDirection == RawDirection.left) { 
+                                o = oLeft;
+                                o.LineIndex = LineIndex.left;
+                            }
+                            else if (r.RawDirection == RawDirection.down)
+                            {
+                                o = oCenterLeft;
+                                o.LineIndex = LineIndex.centerLeft;
+                            }
+                            else if (r.RawDirection == RawDirection.up)
+                            {
+                                o = oCenterRight;
+                                o.LineIndex = LineIndex.centerRight;
+                            }
+                            else if (r.RawDirection == RawDirection.right)
+                            {
+                                o = oRight;
+                                o.LineIndex = LineIndex.right;
+                            }
+                            //-------------
+                            if (r.RawNoteType == RawNoteType.holdStart)
+                            {
+                                if (!o.IsOpen)
+                                    o.IsOpen = true;
+                                else
+                                    Helper.Output("POSSIBLE ERROR: Trying to open two obstacles at once.", ConsoleColor.Red,DebugState.on);
+                                o.Time = b.BeatTime;
+                            }
+                            else if (r.RawNoteType == RawNoteType.holdEnd)
+                            {
+                                if (o.IsOpen)
+                                    o.IsOpen = false;
+                                else
+                                    Helper.Output("POSSIBLE ERROR: Trying to open two obstacles at once.", ConsoleColor.Red, DebugState.on);
+                                //-------------
+                                o.Duration = b.BeatTime - o.Time;
+                                obstArray.Add(o);
+                                o = new();
+                                //-------------
+                                if (r.RawDirection == RawDirection.left)
+                                    oLeft = new();
+                                else if (r.RawDirection == RawDirection.down)
+                                    oCenterLeft = new();
+                                else if (r.RawDirection == RawDirection.up)
+                                    oCenterRight = new();
+                                else if (r.RawDirection == RawDirection.right)
+                                    o = oRight = new();
+                            }
+                            
+                        }
+                    }
+                }
             }
+            return obstArray;
         }
-        public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
+        public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref ArrayList retArray)
         {
             char[] saveMask = currentBeat.Mask.ToCharArray();
             //New Pattern
@@ -385,9 +452,9 @@ namespace Stepmania2BeatSaber
                                 throw new NotImplementedException("Too many notes. Something is critically wrong.");
                             }
                     }
-                    note.Time = baseBeats;
+                    note.Time = currentBeat.BeatTime;
                     retArray.Add(note);
-                    if (r.RawNoteType != RawNoteType.normal)
+                    if (r.RawNoteType != RawNoteType.normal && r.RawNoteType != RawNoteType.holdStart && r.RawNoteType != RawNoteType.holdEnd)
                     {
                         Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta, DebugState.on);
                     }

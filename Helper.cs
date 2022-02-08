@@ -73,15 +73,25 @@ namespace Stepmania2BeatSaber
             {
                 string filename = newPath + GameDifficultyToString(key) + basefilename;
                 // ---------
-                JArray notes = new();
-                var temp = objectToWrite[key];
-
-                if (temp != null)
+                var difficulty = objectToWrite[key];
+                if (difficulty != null)
                 {
-                    foreach (BSaberNote note in (ArrayList)temp)
-                        notes.Add(note.ToJOject());
+                    JArray notes = new(); 
+                    var temp = ((OrderedDictionary)difficulty)["notes"];
+                    if (temp != null)
+                    {
+                        foreach (BSaberNote n in (ArrayList)temp)
+                            notes.Add(n.ToJOject());
+                    }
+                    JArray obstacles = new();
+                    temp = ((OrderedDictionary)difficulty)["obstacles"];
+                    if (temp != null)
+                    {
+                        foreach (BSaberObstacle o in (ArrayList)temp)
+                            obstacles.Add(o.ToJOject());
+                    }
                     //----------
-                    JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes, new JArray());
+                    JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes, obstacles, new JArray(), new JArray());
                     // ---------
                     if (!Directory.Exists(newPath))
                         Directory.CreateDirectory(newPath);
@@ -90,7 +100,7 @@ namespace Stepmania2BeatSaber
                     {
                         writer.Write(chroMapperJSON.ToString());
                     }
-                    Output("Wrote File: " + filename, ConsoleColor.Cyan);
+                    Output("Wrote File: " + filename, ConsoleColor.Gray, DebugState.on);
                 }
             }
         }
@@ -105,17 +115,17 @@ namespace Stepmania2BeatSaber
             }
             catch
             {
-                Output("Unable to get next line from reader", ConsoleColor.Red);
+                Output("Unable to get next line from reader", ConsoleColor.Red, DebugState.on);
                 return "";
             }
         }
-        public static JObject FormatJSON(string version, JArray notes, JArray obstacles)
+        public static JObject FormatJSON(string version, JArray notes, JArray obstacles, JArray events, JArray waypoints)
         {
             return new JObject(new JProperty("_version", version),
                 new JProperty("_notes", notes),
                 new JProperty("_obstacles", obstacles),
-                new JProperty("_events", new JArray()),
-                new JProperty("_waypoints", new JArray()));
+                new JProperty("_events", events),
+                new JProperty("_waypoints", waypoints));
         }
         public static void Output(string outputString, ConsoleColor color)
         {

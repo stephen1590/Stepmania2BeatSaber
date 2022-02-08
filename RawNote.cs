@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace Stepmania2BeatSaber
+﻿namespace Stepmania2BeatSaber
 {
     public enum RawDirection
     {
@@ -86,7 +84,7 @@ namespace Stepmania2BeatSaber
             }
             else if (noteType.Equals('3'))
             {
-                RawNoteType = RawNoteType.holdStart;
+                RawNoteType = RawNoteType.holdEnd;
             }
             else
             {

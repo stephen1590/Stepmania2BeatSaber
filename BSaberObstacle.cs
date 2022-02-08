@@ -9,6 +9,7 @@ namespace Stepmania2BeatSaber
     }
     public enum Width
     {
+        none,
         one,
         two,
         three,
@@ -21,13 +22,14 @@ namespace Stepmania2BeatSaber
             Time = 0;
             LineIndex = LineIndex.left;
             ObstacleType = ObstacleType.one;
-            CutDirection = CutDirection.left;
             IsLeftOrRightSide = IsLeftOrRightSide.none;
+            IsOpen = false;
+            Width = Width.one;
         }
         public ObstacleType ObstacleType { get; set; }
-        public CutDirection CutDirection { get; set; }
         public Width Width { get; set; }
         public double Duration { get; set; }
+        public bool IsOpen { get; set; }
         public new JObject ToJOject()
         {
             JObject retVal = new(new JProperty("_time", Time),

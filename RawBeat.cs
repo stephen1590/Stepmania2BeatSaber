@@ -27,6 +27,7 @@ namespace Stepmania2BeatSaber
         public string Mask;
         public bool HasConflict;
         public ConflictType ConflictType;
+        public double BeatTime { get; set; }
         private static readonly Dictionary<string, ConflictType> ConflictMasks = new()
         {
             { "XX00", ConflictType.doubleHandConflict },
@@ -45,12 +46,14 @@ namespace Stepmania2BeatSaber
             Mask = "";
             HasConflict = false;
             ConflictType = ConflictType.none;
+            BeatTime = 0;
         }
-        public RawBeat(ArrayList rawNoteArray)
+        public RawBeat(ArrayList rawNoteArray, double bTime)
         {
             RawNoteArray = rawNoteArray;
             Count = rawNoteArray.Count;
             Mask = GetMask(rawNoteArray);
+            BeatTime = bTime;
             CheckConflicts();
         }
         public void Add(RawNote note)
