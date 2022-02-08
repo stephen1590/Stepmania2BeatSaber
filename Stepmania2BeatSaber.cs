@@ -10,81 +10,54 @@ namespace Stepmania2BeatSaber
         private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
         private static readonly string pFilename = "Midnite Blaze.sm";
         private static readonly string pSongName = pFilename.Split(".")[0];
-        private static readonly string pChroMapperVersion = "2.2.0";
+        private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
+        {
+            { GameDifficulty.unknown, 1.0},
+            { GameDifficulty.easy, 0.5 },
+            { GameDifficulty.normal, 0.7 },
+            { GameDifficulty.hard, 0.9 },
+            { GameDifficulty.expert, 1.0 }
+        };
         public static void Main(){
             double bpm = 0.0;
             double offset = 0.0;
-            OrderedDictionary hash = ReadFile();
-            if (hash != null && hash.Keys.Count > 0){
-                var temp = hash["offset"];
+            OrderedDictionary rawDAta = GetRawNotes(pDir, pFilename);
+            if (rawDAta != null && rawDAta.Keys.Count > 0){
+                var temp = rawDAta["offset"];
                 if (temp != null){
                     offset = (double)temp;
-                    Output("Offset Found: " + offset.ToString(), ConsoleColor.Green);
+                    Helper.Output("Offset Found: " + offset.ToString(), ConsoleColor.Green);
                 }
-                temp = hash["bpm"];
+                temp = rawDAta["bpm"];
                 if (temp != null)
                 {
                     bpm = (double)temp;
-                    Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green);
+                    Helper.Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green);
                 }
-                temp = hash["songs"];
+                temp = rawDAta["songs"];
                 if (temp != null){
                     var songs = ParseSong((OrderedDictionary)temp, offset, bpm);
-                    WriteFile(songs);
+                    Helper.WriteFile(songs, pDir, pSongName);
                 }
             }
-            Output("Press any key to exit...");
+            Helper.Output("Press any key to exit...");
             Console.ReadKey();
         }
-        public static void WriteFile(OrderedDictionary objectToWrite){
-            string basefilename = "Standard.dat";
-            string newPath = pDir + @"\BeatSaber - " + pSongName + @"\";
-            foreach (string key in objectToWrite.Keys){
-                string filename = newPath + key + basefilename;
-                // ---------
-                JArray notes = new();
-                var temp = objectToWrite[key];
 
-                if (temp != null){
-                    foreach (BSaberNote note in (ArrayList)temp)
-                        notes.Add(note.ToJOject());
-                    //----------
-                    JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes, new JArray());
-                    // ---------
-                    if (!Directory.Exists(newPath))
-                        Directory.CreateDirectory(newPath);
-                    //----------
-                    using (StreamWriter writer = new(filename, false)){
-                        writer.Write(chroMapperJSON.ToString());
-                    }
-                    Output("Wrote File: " + filename, ConsoleColor.Cyan);
-                }
-            }
-        }
-        public static string GetNextLine(StreamReader sr){
-            try{
-                var retVal = sr.ReadLine();
-                if (retVal == null)
-                    return "";
-                return (string)retVal;
-            }
-            catch{
-                return "";
-            }
-        }
-        public static OrderedDictionary ReadFile(){
-            Output("Reading data...", ConsoleColor.Cyan);
+
+        public static OrderedDictionary GetRawNotes(string directory, string fn){
+            Helper.Output("Reading data...", ConsoleColor.Cyan);
             OrderedDictionary playCollection = new();
             OrderedDictionary retHash = new();
             string line;
-            string filename = pDir + @"\" + pFilename;
+            string filename = directory + @"\" + fn;
             try{
                 using (StreamReader reader = new(filename)){
                     // Read one line from file
                     Int32 foundItems = 0;
                     while (reader != null && !reader.EndOfStream && !foundItems.Equals(2))
                     {
-                        line = GetNextLine(reader);
+                        line = Helper.GetNextLine(reader);
                         if (line != null && line.StartsWith("#OFFSET")){
                             line = line[8..^1];
                             retHash["offset"] = Double.Parse(line.Trim()) * -1;
@@ -97,15 +70,15 @@ namespace Stepmania2BeatSaber
                         }
                     }
                     while (reader != null && !reader.EndOfStream){
-                        line = GetNextLine(reader);
+                        line = Helper.GetNextLine(reader);
                         if (line != null && line.StartsWith("//") && line.IndexOf("dance-single") > -1){
                             reader.ReadLine();
                             reader.ReadLine();
                             reader.ReadLine();
                             // Get Difficulty
-                            string difficulty = FindDifficulty(GetNextLine(reader));
+                            GameDifficulty difficulty = FindDifficulty(Helper.GetNextLine(reader));
                             int beatcount = 0;
-                            Output("//Found Difficulty - " + difficulty + " ---------------------------------", ConsoleColor.Yellow);
+                            Helper.Output("//Found Difficulty - " + Helper.GameDifficultyToString(difficulty) + " ---------------------------------", ConsoleColor.Yellow);
                             reader.ReadLine();
                             reader.ReadLine();
                             ArrayList notesByDifficulty = new();
@@ -114,7 +87,7 @@ namespace Stepmania2BeatSaber
                                 // Get Noteset
                                 ArrayList measure = new();
                                 while (!reader.EndOfStream){
-                                    line = GetNextLine(reader);
+                                    line = Helper.GetNextLine(reader);
                                     if (line != null){
                                         if (!line.StartsWith(",") && !line.StartsWith(";")){
                                             RawBeat currentBeat = new ();
@@ -125,7 +98,7 @@ namespace Stepmania2BeatSaber
                                             }
                                             measure.Add(currentBeat);
                                             beatcount += 1;
-                                            Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
+                                            Helper.Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                         }
                                         else{
                                             if (line.StartsWith(";"))
@@ -145,15 +118,15 @@ namespace Stepmania2BeatSaber
                 retHash.Add("songs", playCollection);
             }
             catch (Exception ex){
-                Output("Error reading file. " + Environment.NewLine + ex.Message, ConsoleColor.Red);
+                Helper.Output("Error reading file. " + Environment.NewLine + ex.Message, ConsoleColor.Red);
             }
             return retHash;
         }
         public static OrderedDictionary ParseSong(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
-            foreach (string key in allData.Keys){
-                Output("Creating song: " + key, ConsoleColor.Cyan);
+            foreach (GameDifficulty key in allData.Keys){
+                Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan);
                 ArrayList notesByDifficulty = new();
                 if (allData != null && allData[key] != null)
                     try{
@@ -167,6 +140,7 @@ namespace Stepmania2BeatSaber
                 ArrayList retArray = new();
                 ArrayList obstArray = new();
                 double baseBeats = 0;
+                //Set the base beats + account for offset + scale with difficulty
                 baseBeats += offset * (bpm / 60.0);
                 if (notesByDifficulty != null){
                     RawBeat previousBeat = new();
@@ -197,9 +171,7 @@ namespace Stepmania2BeatSaber
         public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray){
             if (currentBeat != null && previousBeat != null)
             {
-                bool repeatBeat = false;
-               
-                //
+                //making this throw an error so I fucking read it... dog damnit morty
                 if (previousBeat.Mask.Equals(currentBeat.Mask))
                 {
                     //Repeat Pattern - Change it up!
@@ -283,7 +255,7 @@ namespace Stepmania2BeatSaber
                                 retArray.Add(note);
                                 if (r.RawNoteType != RawNoteType.normal)
                                 {
-                                    Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                                    Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
                                 }
                             }
                             else if (r.RawNoteType == RawNoteType.holdStart || r.RawNoteType == RawNoteType.holdEnd)
@@ -393,7 +365,7 @@ namespace Stepmania2BeatSaber
                         retArray.Add(note);
                         if (r.RawNoteType != RawNoteType.normal)
                         {
-                            Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                            Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
                         }
                     }
                 }
@@ -404,39 +376,32 @@ namespace Stepmania2BeatSaber
                     previousBeat = currentBeat;
                 }
         }
-        public static string FindDifficulty(string difficulty){
+        public static GameDifficulty FindDifficulty(string difficulty){
             switch (difficulty.Split(":")[0].Trim()){
                 case "Beginner":{
-                        return "Easy";
+                        return GameDifficulty.easy;
                     }
                 case "Easy":{
-                        return "Normal";
+                        return GameDifficulty.normal;
                     }
                 case "Medium":{
-                        return "Hard";
+                        return GameDifficulty.hard;
                     }
                 case "Hard":{
-                        return "Expert";
+                        return GameDifficulty.expert;
                     }
                 default:{
-                        return "";
+                        return GameDifficulty.unknown;
                     }
             }
         }
-        public static JObject FormatJSON(string version, JArray notes, JArray obstacles){
-            return new JObject(new JProperty("_version", version),
-                new JProperty("_notes", notes),
-                new JProperty("_obstacles", obstacles),
-                new JProperty("_events", new JArray()),
-                new JProperty("_waypoints", new JArray()));
-        }
-        public static void Output(string outputString, ConsoleColor color){
-            Console.ForegroundColor = color;
-            Console.WriteLine(outputString);
-            Console.ResetColor();
-        }
-        public static void Output(string outputString){
-            Console.WriteLine(outputString);
-        }
+    }
+    public enum GameDifficulty
+    {
+        unknown,
+        easy,
+        normal,
+        hard,
+        expert
     }
 }
