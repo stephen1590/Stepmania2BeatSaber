@@ -184,7 +184,7 @@ namespace Stepmania2BeatSaber
                     }
                 }
                 
-                ArrayList retArray = StandardNoteArray(rawBeatsArray);
+                ArrayList retArray = StandardNoteParsing(rawBeatsArray);
                 songData.Add("notes", retArray);
                 //-----------
                 ArrayList obstArray = ObstaclesArray(rawBeatsArray);
@@ -194,7 +194,7 @@ namespace Stepmania2BeatSaber
             }
             return retVal;
         }
-        public static ArrayList StandardNoteArray(ArrayList rawBeatsArray)
+        public static ArrayList StandardNoteParsing(ArrayList rawBeatsArray)
         {
             RawBeat previousBeat = new();
             ArrayList retArray = new();
@@ -204,7 +204,7 @@ namespace Stepmania2BeatSaber
                 if (previousBeat.Mask.Equals(currentBeat.Mask))
                 {
                     //Repeat Pattern - Change it up!
-                    RepeatNoteArray(currentBeat, ref previousBeat, ref retArray);
+                    RepeatNoteParsing(currentBeat, ref previousBeat, ref retArray);
                 }
                 else
                 {
@@ -235,7 +235,7 @@ namespace Stepmania2BeatSaber
                                             {
                                                 note.NoteType = NoteType.blue;
                                                 note.LineIndex = LineIndex.centerRight;
-                                                note.LineLayer = LineLayer.middle;
+                                                note.LineLayer = LineLayer.bottom;
                                             }
                                             else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                             {
@@ -255,16 +255,18 @@ namespace Stepmania2BeatSaber
                                             {
                                                 note.NoteType = NoteType.red;
                                                 note.LineIndex = LineIndex.centerLeft;
+                                                note.LineLayer = LineLayer.top;
                                             }
                                             else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                             {
                                                 note.LineIndex = LineIndex.centerRight;
+                                                note.LineLayer = LineLayer.middle;
                                             }
                                             else
                                             {
                                                 note.LineIndex = LineIndex.centerRight;
+                                                note.LineLayer = LineLayer.middle;
                                             }
-                                            note.LineLayer = LineLayer.middle;
                                             note.CutDirection = CutDirection.up;
                                             break;
                                         }
@@ -308,11 +310,12 @@ namespace Stepmania2BeatSaber
                 BSaberObstacle oCenterRight = new();
                 BSaberObstacle oRight = new();
                 BSaberObstacle o = new();
+                bool centerOccupied = false;
                 foreach (RawBeat b in rawBeatsArray)
                 {
                     foreach (RawNote r in b.RawNoteArray)
                     {
-                        if (r.RawNoteType == RawNoteType.holdStart || r.RawNoteType == RawNoteType.holdEnd)
+                        if ((!centerOccupied && r.RawNoteType == RawNoteType.holdStart) || r.RawNoteType == RawNoteType.holdEnd)
                         {
                             if(r.RawDirection == RawDirection.left) { 
                                 o = oLeft;
@@ -336,31 +339,40 @@ namespace Stepmania2BeatSaber
                             //-------------
                             if (r.RawNoteType == RawNoteType.holdStart)
                             {
-                                if (!o.IsOpen)
+                                if (!o.IsOpen) { 
                                     o.IsOpen = true;
+                                    o.Time = b.BeatTime;
+                                    if (o.LineIndex == LineIndex.centerLeft || o.LineIndex == LineIndex.centerRight)
+                                    {
+                                        centerOccupied = true;
+                                    }
+                                }
                                 else
-                                    Helper.Output("POSSIBLE ERROR: Trying to open two obstacles at once.", ConsoleColor.Red,DebugState.on);
-                                o.Time = b.BeatTime;
+                                    Helper.Output("POSSIBLE ERROR: Trying to open two obstacles at once.", ConsoleColor.Red, DebugState.on);
                             }
                             else if (r.RawNoteType == RawNoteType.holdEnd)
                             {
                                 if (o.IsOpen)
+                                {
                                     o.IsOpen = false;
+                                    if (centerOccupied)
+                                        centerOccupied = false;
+                                    //-------------
+                                    o.Duration = b.BeatTime - o.Time;
+                                    obstArray.Add(o);
+                                    o = new();
+                                    //-------------
+                                    if (r.RawDirection == RawDirection.left)
+                                        oLeft = new();
+                                    else if (r.RawDirection == RawDirection.down)
+                                        oCenterLeft = new();
+                                    else if (r.RawDirection == RawDirection.up)
+                                        oCenterRight = new();
+                                    else if (r.RawDirection == RawDirection.right)
+                                        o = oRight = new();
+                                }
                                 else
-                                    Helper.Output("POSSIBLE ERROR: Trying to open two obstacles at once.", ConsoleColor.Red, DebugState.on);
-                                //-------------
-                                o.Duration = b.BeatTime - o.Time;
-                                obstArray.Add(o);
-                                o = new();
-                                //-------------
-                                if (r.RawDirection == RawDirection.left)
-                                    oLeft = new();
-                                else if (r.RawDirection == RawDirection.down)
-                                    oCenterLeft = new();
-                                else if (r.RawDirection == RawDirection.up)
-                                    oCenterRight = new();
-                                else if (r.RawDirection == RawDirection.right)
-                                    o = oRight = new();
+                                    Helper.Output("POSSIBLE ERROR: Trying to close something that wasn't opened.", ConsoleColor.Red, DebugState.on);
                             }
                             
                         }
@@ -369,7 +381,7 @@ namespace Stepmania2BeatSaber
             }
             return obstArray;
         }
-        public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref ArrayList retArray)
+        public static void RepeatNoteParsing(RawBeat currentBeat, ref RawBeat previousBeat, ref ArrayList retArray)
         {
             char[] saveMask = currentBeat.Mask.ToCharArray();
             //New Pattern

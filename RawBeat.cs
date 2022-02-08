@@ -12,7 +12,9 @@ namespace Stepmania2BeatSaber
         none,
         doubleHandConflict,
         verticalSplit,
-        repeatConflict
+        repeatConflict,
+        leftSameLayer,
+        rightSameLayer
     }
     public enum RepeatException
     {
@@ -33,7 +35,9 @@ namespace Stepmania2BeatSaber
         {
             { "XX00", ConflictType.doubleHandConflict },
             { "00XX", ConflictType.doubleHandConflict },
-            { "0XX0", ConflictType.verticalSplit }
+            { "0XX0", ConflictType.verticalSplit },
+            { "X0X0", ConflictType.leftSameLayer },
+            { "0X0X", ConflictType.rightSameLayer }
         };
         private static readonly Dictionary<string, RepeatException> RepeatMasks = new()
         {
