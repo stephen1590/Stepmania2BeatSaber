@@ -67,7 +67,7 @@ namespace Stepmania2BeatSaber
                     case 3:
                         {
                             IsLeftOrRightSide = IsLeftOrRightSide.left;
-                            RawDirection = RawDirection.left;
+                            RawDirection = RawDirection.right;
                             break;
                         }
                     default:

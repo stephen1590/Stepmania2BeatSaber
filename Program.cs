@@ -5,10 +5,10 @@ using Newtonsoft.Json.Linq;
 namespace Stepmania2BeatSaber
 {
     static class Program{
-        //private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
-        //private static readonly string pFilename = "BREAK DOWN!.sm";
-        private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
-        private static readonly string pFilename = "Midnite Blaze.sm";
+        private static readonly string pDir = @"C:\src\BeatSaber\BREAK DOWN!\original";
+        private static readonly string pFilename = "BREAK DOWN!.sm";
+        //private static readonly string pDir = @"C:\src\BeatSaber\Midnite Blaze";
+        //private static readonly string pFilename = "Midnite Blaze.sm";
         private static readonly string pSongName = pFilename.Split(".")[0];
         private static readonly string pChroMapperVersion = "2.2.0";
         public static void Main(){
@@ -112,18 +112,18 @@ namespace Stepmania2BeatSaber
                             while (!reader.EndOfStream){
                                 var newDifficulty = false;
                                 // Get Noteset
-                                ArrayList measureArray = new();
+                                ArrayList measure = new();
                                 while (!reader.EndOfStream){
                                     line = GetNextLine(reader);
                                     if (line != null){
                                         if (!line.StartsWith(",") && !line.StartsWith(";")){
-                                            ArrayList beatInterval = new();
+                                            RawBeat currentBeat = new ();
                                             for (Int32 i = 0; i < line.Length; i++)
                                             {
                                                 RawNote rawNote = new(line, i);
-                                                beatInterval.Add(rawNote);
+                                                currentBeat.Add(rawNote);
                                             }
-                                            measureArray.Add(beatInterval);
+                                            measure.Add(currentBeat);
                                             beatcount += 1;
                                             Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                         }
@@ -134,7 +134,7 @@ namespace Stepmania2BeatSaber
                                         }
                                     }
                                 }
-                                notesByDifficulty.Add(measureArray);
+                                notesByDifficulty.Add(measure);
                                 if (newDifficulty)
                                     break;
                             }
@@ -168,17 +168,24 @@ namespace Stepmania2BeatSaber
                 double baseBeats = 0;
                 baseBeats += offset * (bpm / 60.0);
                 if (notesByDifficulty != null){
-                    foreach (ArrayList measureArray in notesByDifficulty){
-                        // Default is 4 notes per measure - we may have more, so calculate the interval
-                        double interval = 4.0 / (double)measureArray.Count;
-                        foreach (ArrayList beatInterval in measureArray)
+                    RawBeat previousBeat = new();
+                    foreach (ArrayList measure in notesByDifficulty){
+                        // Default is 4 notes per currentBeat - we may have more, so calculate the interval
+                        double interval = 4.0 / (double)measure.Count;
+                        RawBeat currentBeat = new();
+                        for (int i = 0; i < measure.Count; i++)
                         {
-                            if (beatInterval.Count != 4)
-                                throw new NotImplementedException("New Note Count found - expected only 4");
-                            //-----------------------------
-                            // split the noteset into notes
-                            StandardNoteArray(beatInterval, ref baseBeats, ref retArray);
-                            baseBeats += interval;
+                            var temp = measure[i];
+                            if (temp != null)
+                            {
+                                currentBeat = (RawBeat)temp;
+                                if (currentBeat.Count != 4)
+                                    throw new NotImplementedException("New Note Count found - expected only 4");
+                                //-----------------------------
+                                // split the noteset into notes
+                                StandardNoteArray(currentBeat, ref previousBeat, ref baseBeats, ref retArray);
+                                baseBeats += interval;
+                            }
                         }
                     }
                     retVal.Add(key, retArray);
@@ -186,78 +193,247 @@ namespace Stepmania2BeatSaber
             }
             return retVal;
         }
-        public static void StandardNoteArray(ArrayList beatInterval, ref double baseBeats, ref ArrayList retArray){
-            if (beatInterval != null)
+        public static void StandardNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray){
+            bool isRepeat = false;
+            if (currentBeat != null && previousBeat != null)
             {
-                bool conflict = false;
-                /*if ((!noteCharArray[0].Equals('0') && !noteCharArray[1].Equals('0') )|| (!noteCharArray[2].Equals('0') && !noteCharArray[3].Equals('0')))
+                char[] saveMask = Array.Empty<char>();
+                if (previousBeat.Mask.Equals(currentBeat.Mask))
                 {
-                    conflict = true;
-                }*/
-                //--------------------
-                for (int count = 0; count < beatInterval.Count; count++)
+                    //Repeat Pattern - Change it up!
+                    isRepeat = true;
+                    saveMask = currentBeat.Mask.ToCharArray();
+
+                }
+
+                //New Pattern
+                RawNote r;
+                for (int count = 0; count < currentBeat.Count; count++)
                 {
-                    var temp = beatInterval[count];
-                    if (temp != null)
+                    r = currentBeat.Get(count);
+                    if (r.RawNoteType != RawNoteType.none)
                     {
-                        RawNote r = (RawNote)temp;
-                        if (r.RawNoteType != RawNoteType.none)
+                        Note note = new();
+                        if (count > 1)
+                            note.Type = Type.blue;
+                        switch (r.RawDirection)
                         {
-                            Note note = new();
-                            if (count > 1)
-                                note.Type = Type.blue;
-                            switch (count)
-                            {
-                                case 0:
+                            case RawDirection.left:
+                                {
+                                    if (isRepeat)
+                                    {
+                                        note.CutDirection = CutDirection.right;
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        saveMask[count] = 'o';
+                                    }
+                                    else
                                     {
                                         note.CutDirection = CutDirection.left;
                                         note.LineIndex = LineIndex.left;
-                                        note.LineLayer = LineLayer.middle;
-                                        break;
                                     }
-                                case 1:
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            case RawDirection.down:
+                                {
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                     {
-                                        note.CutDirection = CutDirection.down;
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        if (conflict)
-                                        {
-                                            note.Type = Type.blue;
-                                        }
-                                        break;
+                                        note.Type = Type.blue;
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.middle;
                                     }
-                                case 2:
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                    }
+                                    //----------------
+                                    if (isRepeat)
                                     {
                                         note.CutDirection = CutDirection.up;
+                                        note.LineLayer = LineLayer.middle;
+                                        saveMask[count] = 'x';
+                                    }
+                                    else
+                                    {
+                                        note.CutDirection = CutDirection.down;
+                                    }
+                                    break;
+                                }
+                            case RawDirection.up:
+                                {
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                    {
+                                        note.Type = Type.red;
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
                                         note.LineIndex = LineIndex.centerRight;
                                         note.LineLayer = LineLayer.top;
-                                        if (conflict)
-                                        {
-                                            note.Type = Type.red;
-                                        }
-                                        break;
                                     }
-                                case 3:
+                                    //----------------
+                                    if (isRepeat)
+                                    {
+                                        note.CutDirection = CutDirection.down;
+                                        note.LineLayer = LineLayer.middle;
+                                        saveMask[count] = 'x';
+                                    }
+                                    else
+                                    {
+                                        note.CutDirection = CutDirection.up;
+
+                                    }
+                                    break;
+                                }
+                            case RawDirection.right:
+                                {
+                                    if (isRepeat)
+                                    {
+                                        note.CutDirection = CutDirection.left;
+                                        note.LineIndex = LineIndex.centerRight;
+                                        saveMask[count] = 'o';
+                                    }
+                                    else
                                     {
                                         note.CutDirection = CutDirection.right;
                                         note.LineIndex = LineIndex.right;
-                                        note.LineLayer = LineLayer.middle;
-                                        break;
                                     }
-                                default:
-                                    {
-                                        throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                                    }
-                            }
-                            note.Time = baseBeats;
-                            retArray.Add(note);
-                            if (r.RawNoteType != RawNoteType.normal)
-                            {
-                                Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
-                            }
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            default:
+                                {
+                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                }
+                        }
+                        note.Time = baseBeats;
+                        retArray.Add(note);
+                        if (r.RawNoteType != RawNoteType.normal)
+                        {
+                            Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
                         }
                     }
                 }
+                //--- set the new beat
+                if (!currentBeat.Mask.Equals("0000") || isRepeat)
+                {
+                    if (isRepeat)
+                    {
+                       currentBeat.Mask = new String(saveMask);
+                    }
+                    previousBeat = currentBeat;
+                }
             }
+        }
+        public static void RepeatNoteArray(RawBeat currentBeat, ref RawBeat previousBeat, ref double baseBeats, ref ArrayList retArray)
+        {
+                char[] saveMask = Array.Empty<char>();
+                saveMask = currentBeat.Mask.ToCharArray();
+                //New Pattern
+                RawNote r;
+                for (int count = 0; count < currentBeat.Count; count++)
+                {
+                    r = currentBeat.Get(count);
+                    if (r.RawNoteType != RawNoteType.none)
+                    {
+                        Note note = new();
+                        if (count > 1)
+                            note.Type = Type.blue;
+                        switch (r.RawDirection)
+                        {
+                            case RawDirection.left:
+                                {
+                                    note.CutDirection = CutDirection.right;
+                                    note.LineIndex = LineIndex.centerLeft;
+                                    saveMask[count] = 'o';
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            case RawDirection.down:
+                                {
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                    {
+                                        note.Type = Type.blue;
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
+                                        note.LineIndex = LineIndex.centerLeft;
+                                    }
+                                    note.CutDirection = CutDirection.up;
+                                    note.LineLayer = LineLayer.middle;
+                                    saveMask[count] = 'x';
+                                    break;
+                                }
+                            case RawDirection.up:
+                                {
+                                    if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
+                                    {
+                                        note.Type = Type.red;
+                                        note.LineIndex = LineIndex.centerLeft;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else if (currentBeat.ConflictType == ConflictType.verticalSplit)
+                                    {
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.middle;
+                                    }
+                                    else
+                                    {
+                                        note.LineIndex = LineIndex.centerRight;
+                                        note.LineLayer = LineLayer.top;
+                                    }
+                                    //----------------
+                                    note.CutDirection = CutDirection.down;
+                                    note.LineLayer = LineLayer.middle;
+                                    saveMask[count] = 'x';
+                                    break;
+                                }
+                            case RawDirection.right:
+                                {
+                                    note.CutDirection = CutDirection.left;
+                                    note.LineIndex = LineIndex.centerRight;
+                                    saveMask[count] = 'o';
+                                    
+                                    note.LineLayer = LineLayer.middle;
+                                    break;
+                                }
+                            default:
+                                {
+                                    throw new NotImplementedException("Too many notes. Something is critically wrong.");
+                                }
+                        }
+                        note.Time = baseBeats;
+                        retArray.Add(note);
+                        if (r.RawNoteType != RawNoteType.normal)
+                        {
+                            Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                        }
+                    }
+                }
+                //--- set the new beat
+                if (!currentBeat.Mask.Equals("0000"))
+                {
+                    currentBeat.Mask = new String(saveMask);
+                    previousBeat = currentBeat;
+                }
         }
         public static string FindDifficulty(string difficulty){
             switch (difficulty.Split(":")[0].Trim()){
