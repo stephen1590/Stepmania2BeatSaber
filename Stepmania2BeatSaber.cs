@@ -30,13 +30,13 @@ namespace Stepmania2BeatSaber
                 if (temp != null)
                 {
                     offset = (double)temp;
-                    Helper.Output("Offset Found: " + offset.ToString(), ConsoleColor.Green);
+                    Helper.Output("Offset Found: " + offset.ToString(), ConsoleColor.Green, DebugState.on);
                 }
                 temp = rawDAta["bpm"];
                 if (temp != null)
                 {
                     bpm = (double)temp;
-                    Helper.Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green);
+                    Helper.Output("BPM Found: " + bpm.ToString(), ConsoleColor.Green, DebugState.on);
                 }
                 temp = rawDAta["songs"];
                 if (temp != null)
@@ -45,14 +45,14 @@ namespace Stepmania2BeatSaber
                     Helper.WriteFile(songs, pDir, pSongName);
                 }
             }
-            Helper.Output("Press any key to exit...");
+            Helper.Output("Press any key to exit...", DebugState.on);
             Console.ReadKey();
         }
 
 
         public static OrderedDictionary GetRawNotes(string directory, string fn)
         {
-            Helper.Output("Reading data...", ConsoleColor.Cyan);
+            Helper.Output("Reading data...", ConsoleColor.Cyan, DebugState.on);
             OrderedDictionary playCollection = new();
             OrderedDictionary retHash = new();
             string line;
@@ -90,7 +90,7 @@ namespace Stepmania2BeatSaber
                             // Get Difficulty
                             GameDifficulty difficulty = Helper.FindDifficulty(Helper.GetNextLine(reader));
                             int beatcount = 0;
-                            Helper.Output("//Found Difficulty - " + Helper.GameDifficultyToString(difficulty) + " ---------------------------------", ConsoleColor.Yellow);
+                            Helper.Output("//Found Difficulty - " + Helper.GameDifficultyToString(difficulty), ConsoleColor.Yellow, DebugState.on);
                             reader.ReadLine();
                             reader.ReadLine();
                             ArrayList notesByDifficulty = new();
@@ -136,7 +136,7 @@ namespace Stepmania2BeatSaber
             }
             catch (Exception ex)
             {
-                Helper.Output("Error reading file. " + Environment.NewLine + ex.Message, ConsoleColor.Red);
+                Helper.Output("Error reading file. " + Environment.NewLine + ex.Message, ConsoleColor.Red, DebugState.on);
             }
             return retHash;
         }
@@ -145,7 +145,7 @@ namespace Stepmania2BeatSaber
             OrderedDictionary retVal = new();
             foreach (GameDifficulty key in allData.Keys)
             {
-                Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan);
+                Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
                 if (allData != null && allData[key] != null)
                     try
@@ -279,7 +279,7 @@ namespace Stepmania2BeatSaber
                                 retArray.Add(note);
                                 if (r.RawNoteType != RawNoteType.normal)
                                 {
-                                    Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                                    Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta, DebugState.on);
                                 }
                             }
                             else if (r.RawNoteType == RawNoteType.holdStart || r.RawNoteType == RawNoteType.holdEnd)
@@ -389,7 +389,7 @@ namespace Stepmania2BeatSaber
                     retArray.Add(note);
                     if (r.RawNoteType != RawNoteType.normal)
                     {
-                        Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta);
+                        Helper.Output("Found an unexpected note value:" + r.RawNoteType.ToString(), ConsoleColor.Magenta, DebugState.on);
                     }
                 }
             }

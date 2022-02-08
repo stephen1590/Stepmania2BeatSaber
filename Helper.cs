@@ -4,9 +4,15 @@ using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
+    public enum DebugState
+    {
+        off,
+        on
+    }
     static internal class Helper
     {
         private static readonly string pChroMapperVersion = "2.2.0";
+        public static DebugState DebugState = DebugState.off;
         public static GameDifficulty FindDifficulty(string difficulty)
         {
             switch (difficulty.Split(":")[0].Trim())
@@ -113,13 +119,27 @@ namespace Stepmania2BeatSaber
         }
         public static void Output(string outputString, ConsoleColor color)
         {
-            Console.ForegroundColor = color;
-            Console.WriteLine(outputString);
-            Console.ResetColor();
+            Output(outputString, color, DebugState);
+        }
+        public static void Output(string outputString, ConsoleColor color, DebugState dbState)
+        {
+            if (dbState == DebugState.on)
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine(outputString);
+                Console.ResetColor();
+            }
         }
         public static void Output(string outputString)
         {
-            Console.WriteLine(outputString);
+            Output(outputString, DebugState);
+        }
+        public static void Output(string outputString, DebugState dbState)
+        {
+            if (dbState == DebugState.on)
+            {
+                Console.WriteLine(outputString);
+            }
         }
     }
 }
