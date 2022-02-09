@@ -17,20 +17,16 @@ namespace Stepmania2BeatSaber
         private string pDir { get; set; }//@"C:\src\BeatSaber\BREAK DOWN!\original";
         private string pFilename { get; set; }//"BREAK DOWN!.sm";
         private string pSongName { get; set; }//pFilename.Split(".")[0];
-        private string pFullFilePath { get; set; }
         public Stepmania2BeatSaberUI()
         {
             pDir = @"C:\src\BeatSaber";
             pFilename = string.Empty;
             pSongName = string.Empty;
-            pFullFilePath = string.Empty;
             InitializeComponent();
         }
 
         private void FileBrowse_Click(object sender, EventArgs e)
         {
-            var fileContent = string.Empty;
-            var filePath = string.Empty;
             if (Directory.Exists(pDir))
             {
                 openFileDialog1.InitialDirectory = pDir;
@@ -46,7 +42,7 @@ namespace Stepmania2BeatSaber
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 //Get the path of specified file
-                filePath = openFileDialog1.FileName;
+                string filePath = openFileDialog1.FileName;
                 if (filePath != string.Empty)
                 {
                     if (!filePath.EndsWith(".sm"))
@@ -76,6 +72,7 @@ namespace Stepmania2BeatSaber
                     pDir = (string)d;
                     if(pFilename != string.Empty && pDir != string.Empty)
                     {
+                        pSongName = pFilename.Split(".")[0];
                         double bpm = 0.0;
                         double offset = 0.0;
                         OrderedDictionary rawDAta = Stepmania2BeatSaber.GetRawNotes(pDir, pFilename);
@@ -99,6 +96,7 @@ namespace Stepmania2BeatSaber
                                 var songs = Stepmania2BeatSaber.CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
                                 Helper.WriteFile(songs, pDir, pSongName);
                             }
+                            button1.Enabled = true;
                         }
                     }
                 }
@@ -114,12 +112,40 @@ namespace Stepmania2BeatSaber
 
         private void Stepmania2BeatSaberUI_Load(object sender, EventArgs e)
         {
-            Console.SetOut(new TextBoxWriter(richTextBox1));
+
+                Console.SetOut(new TextBoxWriter(richTextBox1));
+                
+        }
+
+        private void fileBox_TextChanged(object sender, EventArgs e)
+        {
+            if(fileBox.Text.EndsWith(".sm"))
+            {
+                ExecuteButton.Enabled = true;
+            }
+            else
+            {
+                ExecuteButton.Enabled = false;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(pDir + "\\" + "BeatSaber - " + pSongName))
+            {
+                System.Diagnostics.ProcessStartInfo StartInformation = new System.Diagnostics.ProcessStartInfo();
+                StartInformation.FileName = pDir + "\\" + "BeatSaber - " + pSongName;
+                System.Diagnostics.Process process = System.Diagnostics.Process.Start(StartInformation);
+                process.EnableRaisingEvents = true;
+            //System.Diagnostics.Process.Start("explorer.exe", pDir + "\\" + pSongName + "\\");
+            }
         }
     }
     public class TextBoxWriter : TextWriter
     {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         RichTextBox _output = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         public TextBoxWriter(RichTextBox output)
         {
