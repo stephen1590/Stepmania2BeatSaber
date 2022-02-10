@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWindowsForms>True</UseWindowsForms>
-    <StartupObject>Stepmania2BeatSaber.Stepmania2BeatSaber</StartupObject>
+    <StartupObject>Stepmania2BeatSaber.SM2BS</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

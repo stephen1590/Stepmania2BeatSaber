@@ -1,6 +1,6 @@
 ﻿namespace Stepmania2BeatSaber
 {
-    partial class Stepmania2BeatSaberUI
+    partial class SM2BSUI
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.ExecuteButton = new System.Windows.Forms.Button();
             this.fileBox = new System.Windows.Forms.TextBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.consoleOutputWindow = new System.Windows.Forms.RichTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
@@ -77,14 +77,14 @@
             this.fileBox.TabIndex = 2;
             this.fileBox.TextChanged += new System.EventHandler(this.fileBox_TextChanged);
             // 
-            // richTextBox1
+            // consoleOutputWindow
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(12, 41);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(384, 320);
-            this.richTextBox1.TabIndex = 4;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
+            this.consoleOutputWindow.Location = new System.Drawing.Point(12, 41);
+            this.consoleOutputWindow.Name = "consoleOutputWindow";
+            this.consoleOutputWindow.Size = new System.Drawing.Size(384, 320);
+            this.consoleOutputWindow.TabIndex = 4;
+            this.consoleOutputWindow.Text = "";
+            this.consoleOutputWindow.TextChanged += new System.EventHandler(this.consoleOutputWindow_TextChanged);
             // 
             // button1
             // 
@@ -106,7 +106,7 @@
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(537, 373);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.consoleOutputWindow);
             this.Controls.Add(this.fileBox);
             this.Controls.Add(this.ExecuteButton);
             this.Controls.Add(this.LoadFileButton);
@@ -129,7 +129,7 @@
         private OpenFileDialog openFileDialog1;
         private Button ExecuteButton;
         private TextBox fileBox;
-        private RichTextBox richTextBox1;
+        private RichTextBox consoleOutputWindow;
         private Button button1;
         private FolderBrowserDialog folderBrowserDialog1;
     }

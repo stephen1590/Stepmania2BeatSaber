@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 
 namespace Stepmania2BeatSaber
 {
-    public static class Stepmania2BeatSaber
+    public static class SM2BS
     {
 
         private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
@@ -14,17 +14,16 @@ namespace Stepmania2BeatSaber
             { GameDifficulty.hard, 0.9 },
             { GameDifficulty.expert, 1.0 }
         };
+
         [STAThread]
         static void Main()
         {
-            Application.Run(new Stepmania2BeatSaberUI());
+            Application.Run(new SM2BSUI());
             
             
             //Helper.Output("Press any key to exit...", DebugState.on);
             //Console.ReadKey();
         }
-
-
         public static OrderedDictionary GetRawNotes(string directory, string fn)
         {
             Helper.Output("Reading data...", ConsoleColor.Cyan, DebugState.on);
