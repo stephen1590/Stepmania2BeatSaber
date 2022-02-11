@@ -21,6 +21,7 @@ namespace Stepmania2BeatSaber
         public bool ApplyObstacles { get; set; } = true;
         public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.all;
         public string WIPCustomLevelsPath { get; set; } = String.Empty;
+        public string version = "0.0.1";
     }
     public class OptionsHelper
     {
@@ -35,56 +36,43 @@ namespace Stepmania2BeatSaber
             { GameDifficulty.expert, 1.1 },
             { GameDifficulty.all, 0 }
         };
-        private readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString();
-        private readonly string AppDir = "\\SM2BS\\";
+        private readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private readonly string OptionsFileName = "SM2BS.json";
         public OptionsHelper()
         {
-            string dir = AppData + AppDir;
-            JObject settings = new();
-            optionsPopulate(ref settings, dir);
+            optionsPopulate();
         }
-        public void optionsPopulate(ref JObject settings, string dir)
+        public void optionsPopulate()
         {
             bool newOptions = false;
-            if (Directory.Exists(dir))
-            {
-                if (File.Exists(dir+"\\"+OptionsFileName))
+                if (File.Exists(AppDir + "\\"+OptionsFileName))
                 {
-                    String settingsAsJSONString = Helper.ReadFile(dir,OptionsFileName);
+                    String settingsAsJSONString = Helper.ReadFile(AppDir, OptionsFileName);
                     if (settingsAsJSONString == string.Empty)
                     {
                         newOptions = true;
                     }
                     options = Helper.optionsFromJSONGet(settingsAsJSONString);
+                    Console.WriteLine("Config succesfully loaded from AppData.");
                 }
-            }
-            else
-            {
-                Directory.CreateDirectory(dir);
-                newOptions = true;
-            }
+                else
+                {
+                    newOptions = true;
+                }
             if (newOptions)
             {
-                optionsNew(dir);
+                //There is an automatic NEW if we have a null options
+                optionsSave();
             }
         }
-        private void optionsNew(string dir)
+        public void optionsSave()
         {
-            JObject settings = FormatJSON();
-            optionsSave(ref settings, dir);
-        }
-        private void optionsSave(ref JObject settings, string dir)
-        {
-            Helper.WriteJSON(settings, dir, OptionsFileName);
-        }
-        public JObject FormatJSON()
-        {
-            return new JObject(new JProperty("_ResolveRepeats", new JValue(options.ResolveRepeats)),
-                new JProperty("_ResolveConflicts", new JValue(options.ResolveConflicts)),
-                new JProperty("_ApplyObstacles", new JValue(options.ApplyObstacles)),
-                new JProperty("_MyGameDifficulty", new JValue(options.MyGameDifficulty)),
-                new JProperty("_WIPCustomLevelsPath", new JValue(options.WIPCustomLevelsPath)));
+            if(options == null)
+            {
+                options = new();
+                Console.WriteLine("No Config found. Create a new one.");
+            }
+            Helper.WriteJSON(JObject.FromObject(options), AppDir, OptionsFileName);
         }
     }
 }

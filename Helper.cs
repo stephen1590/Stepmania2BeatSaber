@@ -97,10 +97,8 @@ namespace Stepmania2BeatSaber
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             //----------
-            using (StreamWriter writer = new(dir + "\\" + filename, false))
-            {
-                writer.Write(jOb.ToString());
-            }
+            using StreamWriter writer = new(dir + "\\" + filename, false);
+            writer.Write(jOb.ToString());
         }
         public static void WriteSongs(OrderedDictionary objectToWrite, string directory, string songName)
         {

@@ -100,13 +100,12 @@ namespace Stepmania2BeatSaber
                                 var songs = SM2BS.CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
                                 Helper.WriteSongs(songs, pDir, pSongName);
                             }
-                            button1.Enabled = true;
+                            openOutputButton.Enabled = true;
                         }
                     }
                 }
                
             }
-            
         }
 
         private void consoleOutputWindow_TextChanged(object sender, EventArgs e)
@@ -133,7 +132,7 @@ namespace Stepmania2BeatSaber
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void openOutputButton_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(pDir + "\\" + "BeatSaber - " + pSongName))
             {
@@ -141,19 +140,41 @@ namespace Stepmania2BeatSaber
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void saveConfigButton_Click(object sender, EventArgs e)
         {
-
+            if (pOptions != null)
+            {
+                pOptions.optionsSave();
+                Console.WriteLine("Config Saved to AppData.");
+                saveConfigButton.Enabled = false;
+            }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void fixRepeatsBox_CheckedChanged(object sender, EventArgs e)
         {
-
+            if(pOptions != null && pOptions.options != null)
+            {
+                pOptions.options.ResolveRepeats = fixRepeatsBox.Checked;
+                saveConfigButton.Enabled = true;
+            }
         }
 
-        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        private void includeObstaclesBox_CheckedChanged(object sender, EventArgs e)
         {
+            if (pOptions != null && pOptions.options != null)
+            {
+                pOptions.options.ApplyObstacles = includeObstaclesBox.Checked;
+                saveConfigButton.Enabled = true;
+            }
+        }
 
+        private void lessConflictsBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (pOptions != null && pOptions.options != null)
+            {
+                pOptions.options.ResolveConflicts = lessConflictsBox.Checked;
+                saveConfigButton.Enabled = true;
+            }
         }
     }
     public class TextBoxWriter : TextWriter
