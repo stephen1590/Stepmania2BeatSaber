@@ -40,32 +40,6 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
-        public static string GameDifficultyToString(GameDifficulty difficulty)
-        {
-            switch (difficulty)
-            {
-                case GameDifficulty.easy:
-                    {
-                        return "Easy";
-                    }
-                case GameDifficulty.normal:
-                    {
-                        return "Normal";
-                    }
-                case GameDifficulty.hard:
-                    {
-                        return "Hard";
-                    }
-                case GameDifficulty.expert:
-                    {
-                        return "Expert";
-                    }
-                default:
-                    {
-                        return "Unknown Difficulty";
-                    }
-            }
-        }
         internal static JToken jTokenParse(string jsonString)
         {
             return JToken.Parse(jsonString);
@@ -106,7 +80,7 @@ namespace Stepmania2BeatSaber
             string newPath = directory + @"\BeatSaber - " + songName + @"\";
             foreach (GameDifficulty key in objectToWrite.Keys)
             {
-                string filename = newPath + GameDifficultyToString(key) + basefilename;
+                string filename = newPath + ((GameDifficulty)key).ToString() + basefilename;
                 // ---------
                 var difficulty = objectToWrite[key];
                 if (difficulty != null)

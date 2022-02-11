@@ -33,9 +33,10 @@ namespace Stepmania2BeatSaber
             { GameDifficulty.normal, 0.8 },
             { GameDifficulty.hard, 0.9 },
             { GameDifficulty.expert, 1.0 },
-            { GameDifficulty.expert, 1.1 },
+            { GameDifficulty.expertPlus, 1.1 },
             { GameDifficulty.all, 0 }
         };
+  
         private readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private readonly string OptionsFileName = "SM2BS.json";
         public OptionsHelper()

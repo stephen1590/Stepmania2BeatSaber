@@ -25,8 +25,21 @@ namespace Stepmania2BeatSaber
             pSongName = string.Empty;
             pOptions = opt;
             InitializeComponent();
+            optionsSetup();
         }
+        private void optionsSetup()
+        {
+            if (pOptions != null && pOptions.options != null)
+            {
+                comboBox1.DataSource = Enum.GetValues(typeof(GameDifficulty));
+                comboBox1.SelectedIndex = (int)pOptions.options.MyGameDifficulty;
+                //-----
+                fixRepeatsBox.Checked = pOptions.options.ResolveRepeats;
+                includeObstaclesBox.Checked = pOptions.options.ApplyObstacles;
+                lessConflictsBox.Checked = pOptions.options.ResolveConflicts;
+            }
 
+        }
         private void FileBrowse_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(pDir))
@@ -110,14 +123,11 @@ namespace Stepmania2BeatSaber
 
         private void consoleOutputWindow_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         private void Stepmania2BeatSaberUI_Load(object sender, EventArgs e)
         {
-
-                Console.SetOut(new TextBoxWriter(consoleOutputWindow));
-                
+            Console.SetOut(new TextBoxWriter(consoleOutputWindow));    
         }
 
         private void fileBox_TextChanged(object sender, EventArgs e)
@@ -142,8 +152,13 @@ namespace Stepmania2BeatSaber
 
         private void saveConfigButton_Click(object sender, EventArgs e)
         {
-            if (pOptions != null)
+            if (pOptions != null && pOptions.options !=null)
             {
+
+                pOptions.options.MyGameDifficulty = (GameDifficulty)comboBox1.SelectedIndex; 
+                pOptions.options.ResolveRepeats = fixRepeatsBox.Checked;
+                pOptions.options.ApplyObstacles = includeObstaclesBox.Checked;
+                pOptions.options.ResolveConflicts = lessConflictsBox.Checked;
                 pOptions.optionsSave();
                 Console.WriteLine("Config Saved to AppData.");
                 saveConfigButton.Enabled = false;
@@ -152,27 +167,24 @@ namespace Stepmania2BeatSaber
 
         private void fixRepeatsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if(pOptions != null && pOptions.options != null)
+            if(pOptions != null)
             {
-                pOptions.options.ResolveRepeats = fixRepeatsBox.Checked;
                 saveConfigButton.Enabled = true;
             }
         }
 
         private void includeObstaclesBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (pOptions != null && pOptions.options != null)
+            if (pOptions != null)
             {
-                pOptions.options.ApplyObstacles = includeObstaclesBox.Checked;
                 saveConfigButton.Enabled = true;
             }
         }
 
         private void lessConflictsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (pOptions != null && pOptions.options != null)
+            if (pOptions != null)
             {
-                pOptions.options.ResolveConflicts = lessConflictsBox.Checked;
                 saveConfigButton.Enabled = true;
             }
         }
@@ -190,10 +202,13 @@ namespace Stepmania2BeatSaber
                 }
             }
         }
-
+        
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if(pOptions != null)
+            {
+                saveConfigButton.Enabled = true;
+            }
         }
     }
     public class TextBoxWriter : TextWriter

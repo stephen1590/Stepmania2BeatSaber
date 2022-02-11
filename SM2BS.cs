@@ -51,7 +51,7 @@ namespace Stepmania2BeatSaber
                             // Get Difficulty
                             GameDifficulty difficulty = Helper.FindDifficulty(Helper.GetNextLine(reader));
                             int beatcount = 0;
-                            Helper.Output("//Found Difficulty - " + Helper.GameDifficultyToString(difficulty), ConsoleColor.Yellow, DebugState.on);
+                            Helper.Output("//Found Difficulty - " + difficulty.ToString(), ConsoleColor.Yellow, DebugState.on);
                             reader.ReadLine();
                             reader.ReadLine();
                             ArrayList notesByDifficulty = new();
@@ -106,7 +106,7 @@ namespace Stepmania2BeatSaber
             OrderedDictionary retVal = new();
             foreach (GameDifficulty key in allData.Keys)
             {
-                Helper.Output("Creating song: " + Helper.GameDifficultyToString(key), ConsoleColor.Cyan, DebugState.on);
+                Helper.Output("Creating song: " + ((GameDifficulty)key).ToString(), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
                 ArrayList rawBeatsArray = new();
                 OrderedDictionary songData = new();
