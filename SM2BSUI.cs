@@ -176,6 +176,25 @@ namespace Stepmania2BeatSaber
                 saveConfigButton.Enabled = true;
             }
         }
+
+        private void WIPCustomLevelsDir_Click(object sender, EventArgs e)
+        {
+            if (setBSaberDirBrowser.ShowDialog() == DialogResult.OK)
+            {
+                if (pOptions != null && pOptions.options != null && setBSaberDirBrowser.SelectedPath != String.Empty)
+                {
+                    pOptions.options.WIPCustomLevelsPath = setBSaberDirBrowser.SelectedPath;
+                    Console.Write("Beat Saber Directory Selected: ");
+                    Console.WriteLine(setBSaberDirBrowser.SelectedPath);
+                    saveConfigButton.Enabled = true;
+                }
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
     public class TextBoxWriter : TextWriter
     {

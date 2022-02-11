@@ -34,13 +34,14 @@
             this.fileBox = new System.Windows.Forms.TextBox();
             this.consoleOutputWindow = new System.Windows.Forms.RichTextBox();
             this.openOutputButton = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.setBSaberDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.saveConfigButton = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.fixRepeatsBox = new System.Windows.Forms.CheckBox();
             this.lessConflictsBox = new System.Windows.Forms.CheckBox();
             this.includeObstaclesBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.WIPCustomLevelsDir = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // LoadFileButton
@@ -79,7 +80,7 @@
             // 
             this.fileBox.Location = new System.Drawing.Point(12, 12);
             this.fileBox.Name = "fileBox";
-            this.fileBox.Size = new System.Drawing.Size(386, 23);
+            this.fileBox.Size = new System.Drawing.Size(384, 23);
             this.fileBox.TabIndex = 2;
             this.fileBox.TextChanged += new System.EventHandler(this.fileBox_TextChanged);
             // 
@@ -110,7 +111,7 @@
             this.saveConfigButton.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.saveConfigButton.Enabled = false;
             this.saveConfigButton.ForeColor = System.Drawing.SystemColors.Control;
-            this.saveConfigButton.Location = new System.Drawing.Point(404, 237);
+            this.saveConfigButton.Location = new System.Drawing.Point(404, 266);
             this.saveConfigButton.Name = "saveConfigButton";
             this.saveConfigButton.Size = new System.Drawing.Size(126, 23);
             this.saveConfigButton.TabIndex = 6;
@@ -125,6 +126,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 23);
             this.comboBox1.TabIndex = 7;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // fixRepeatsBox
             // 
@@ -136,7 +138,6 @@
             this.fixRepeatsBox.TabIndex = 8;
             this.fixRepeatsBox.Text = "Fix Repeats";
             this.fixRepeatsBox.UseVisualStyleBackColor = true;
-            this.fixRepeatsBox.Checked = pOptions.options.ResolveRepeats;
             this.fixRepeatsBox.CheckedChanged += new System.EventHandler(this.fixRepeatsBox_CheckedChanged);
             // 
             // lessConflictsBox
@@ -149,7 +150,6 @@
             this.lessConflictsBox.TabIndex = 9;
             this.lessConflictsBox.Text = "Less Conflicts";
             this.lessConflictsBox.UseVisualStyleBackColor = true;
-            this.lessConflictsBox.Checked = pOptions.options.ResolveConflicts;
             this.lessConflictsBox.CheckedChanged += new System.EventHandler(this.lessConflictsBox_CheckedChanged);
             // 
             // includeObstaclesBox
@@ -162,7 +162,6 @@
             this.includeObstaclesBox.TabIndex = 10;
             this.includeObstaclesBox.Text = "Include Obstacles";
             this.includeObstaclesBox.UseVisualStyleBackColor = true;
-            this.includeObstaclesBox.Checked = pOptions.options.ApplyObstacles;
             this.includeObstaclesBox.CheckedChanged += new System.EventHandler(this.includeObstaclesBox_CheckedChanged);
             // 
             // label1
@@ -175,12 +174,25 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "Configurations";
             // 
+            // WIPCustomLevelsDir
+            // 
+            this.WIPCustomLevelsDir.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.WIPCustomLevelsDir.ForeColor = System.Drawing.SystemColors.Control;
+            this.WIPCustomLevelsDir.Location = new System.Drawing.Point(404, 237);
+            this.WIPCustomLevelsDir.Name = "WIPCustomLevelsDir";
+            this.WIPCustomLevelsDir.Size = new System.Drawing.Size(126, 23);
+            this.WIPCustomLevelsDir.TabIndex = 12;
+            this.WIPCustomLevelsDir.Text = "Set BSaber Dir";
+            this.WIPCustomLevelsDir.UseVisualStyleBackColor = false;
+            this.WIPCustomLevelsDir.Click += new System.EventHandler(this.WIPCustomLevelsDir_Click);
+            // 
             // SM2BSUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(537, 373);
+            this.Controls.Add(this.WIPCustomLevelsDir);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.includeObstaclesBox);
             this.Controls.Add(this.lessConflictsBox);
@@ -214,12 +226,13 @@
         private TextBox fileBox;
         private RichTextBox consoleOutputWindow;
         private Button openOutputButton;
-        private FolderBrowserDialog folderBrowserDialog1;
+        private FolderBrowserDialog setBSaberDirBrowser;
         private Button saveConfigButton;
         private ComboBox comboBox1;
         private CheckBox fixRepeatsBox;
         private CheckBox lessConflictsBox;
         private CheckBox includeObstaclesBox;
         private Label label1;
+        private Button WIPCustomLevelsDir;
     }
 }
