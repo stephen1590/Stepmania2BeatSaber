@@ -5,24 +5,11 @@ namespace Stepmania2BeatSaber
 {
     public static class SM2BS
     {
-
-        private static readonly Dictionary<GameDifficulty, double> pDifficulty = new()
-        {
-            { GameDifficulty.unknown, 1.0 },
-            { GameDifficulty.easy, 0.5 },
-            { GameDifficulty.normal, 0.7 },
-            { GameDifficulty.hard, 0.9 },
-            { GameDifficulty.expert, 1.0 }
-        };
-
         [STAThread]
         static void Main()
         {
-            Application.Run(new SM2BSUI());
-            
-            
-            //Helper.Output("Press any key to exit...", DebugState.on);
-            //Console.ReadKey();
+            OptionsHelper opt = new();
+            Application.Run(new SM2BSUI(ref opt));
         }
         public static OrderedDictionary GetRawNotes(string directory, string fn)
         {
@@ -534,13 +521,5 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
-    }
-    public enum GameDifficulty
-    {
-        unknown,
-        easy,
-        normal,
-        hard,
-        expert
     }
 }

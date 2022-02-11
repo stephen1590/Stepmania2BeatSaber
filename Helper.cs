@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
@@ -65,7 +66,21 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
-        public static void WriteFile(OrderedDictionary objectToWrite, string directory, string songName)
+
+        internal static JToken ReadJSON(string optionsFileName)
+        {
+            using StreamReader r = new StreamReader(optionsFileName);
+            var js = r.ReadToEnd();
+            string jsonString = "";
+            if (js != null)
+            {
+                List<Options> items = JsonConvert.DeserializeObject<List<Options>>(jsonString);
+                jsonString = (string)js;
+            }
+            return JToken.Parse(jsonString);
+        }
+
+        public static void WriteSongs(OrderedDictionary objectToWrite, string directory, string songName)
         {
             string basefilename = "Standard.dat";
             string newPath = directory + @"\BeatSaber - " + songName + @"\";

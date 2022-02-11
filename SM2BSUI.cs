@@ -17,11 +17,13 @@ namespace Stepmania2BeatSaber
         private string pDir = String.Empty;
         private string pFilename = String.Empty;
         private string pSongName = String.Empty;
-        public SM2BSUI()
+        private readonly OptionsHelper? pOptions;
+        public SM2BSUI(ref OptionsHelper opt)
         {
             pDir = @"C:\src\BeatSaber";
             pFilename = string.Empty;
             pSongName = string.Empty;
+            pOptions = opt;
             InitializeComponent();
         }
 
@@ -96,7 +98,7 @@ namespace Stepmania2BeatSaber
                             if (temp != null)
                             {
                                 var songs = SM2BS.CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
-                                Helper.WriteFile(songs, pDir, pSongName);
+                                Helper.WriteSongs(songs, pDir, pSongName);
                             }
                             button1.Enabled = true;
                         }
@@ -137,6 +139,21 @@ namespace Stepmania2BeatSaber
             {
                 System.Diagnostics.Process.Start("explorer.exe", pDir + "\\" + "BeatSaber - " + pSongName);
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
     public class TextBoxWriter : TextWriter
