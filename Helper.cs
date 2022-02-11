@@ -66,20 +66,42 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
-
-        internal static JToken ReadJSON(string optionsFileName)
+        internal static JToken jTokenParse(string jsonString)
         {
-            using StreamReader r = new StreamReader(optionsFileName);
-            var js = r.ReadToEnd();
-            string jsonString = "";
-            if (js != null)
-            {
-                List<Options> items = JsonConvert.DeserializeObject<List<Options>>(jsonString);
-                jsonString = (string)js;
-            }
             return JToken.Parse(jsonString);
         }
-
+        internal static Options optionsFromJSONGet(string jsonString)
+        {
+            Options items = JsonConvert.DeserializeObject<Options>(jsonString);
+            if(items == null)
+            {
+                items = new Options();
+            }
+            return items;
+        }
+        internal static string ReadFile(string dir, string optionsFileName)
+        {
+            using StreamReader r = new(dir+"\\"+optionsFileName);
+            var v = r.ReadToEnd();
+            string retVal = "";
+            if (v != null)
+            {
+                retVal = (string)v;
+               
+            }
+            return retVal;
+        }
+        public static void WriteJSON(JObject jOb, string dir, string filename)
+        {
+            // ---------
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            //----------
+            using (StreamWriter writer = new(dir + "\\" + filename, false))
+            {
+                writer.Write(jOb.ToString());
+            }
+        }
         public static void WriteSongs(OrderedDictionary objectToWrite, string directory, string songName)
         {
             string basefilename = "Standard.dat";

@@ -24,7 +24,7 @@ namespace Stepmania2BeatSaber
     }
     public class OptionsHelper
     {
-        public Options options { get; set; } = new();
+        public Options? options { get; set; }
         public static readonly Dictionary<GameDifficulty, double> DifficultyScale = new()
         {
             { GameDifficulty.unknown, 1.0 },
@@ -41,17 +41,42 @@ namespace Stepmania2BeatSaber
         public OptionsHelper()
         {
             string dir = AppData + AppDir;
+            JObject settings = new();
+            optionsPopulate(ref settings, dir);
+        }
+        public void optionsPopulate(ref JObject settings, string dir)
+        {
+            bool newOptions = false;
             if (Directory.Exists(dir))
             {
-                if (File.Exists(OptionsFileName))
+                if (File.Exists(dir+"\\"+OptionsFileName))
                 {
-                    JToken jt = Helper.ReadJSON(OptionsFileName);
-                }
-                else
-                {
-                    JObject settings = FormatJSON();
+                    String settingsAsJSONString = Helper.ReadFile(dir,OptionsFileName);
+                    if (settingsAsJSONString == string.Empty)
+                    {
+                        newOptions = true;
+                    }
+                    options = Helper.optionsFromJSONGet(settingsAsJSONString);
                 }
             }
+            else
+            {
+                Directory.CreateDirectory(dir);
+                newOptions = true;
+            }
+            if (newOptions)
+            {
+                optionsNew(dir);
+            }
+        }
+        private void optionsNew(string dir)
+        {
+            JObject settings = FormatJSON();
+            optionsSave(ref settings, dir);
+        }
+        private void optionsSave(ref JObject settings, string dir)
+        {
+            Helper.WriteJSON(settings, dir, OptionsFileName);
         }
         public JObject FormatJSON()
         {
