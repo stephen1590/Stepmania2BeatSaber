@@ -6,10 +6,16 @@ namespace Stepmania2BeatSaber
     public static class SM2BS
     {
         private static Options opt = new();
+        public static GameDifficulty[] GameDifficultyKeys = (GameDifficulty[])Enum.GetValues(typeof(GameDifficulty));
         [STAThread]
         static void Main()
         {
             Helper.optionsPopulate(ref opt);
+            if (opt.MyGameDifficulty != GameDifficulty.all)
+            {
+                GameDifficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
+            }
+
             Application.Run(new SM2BSUI(ref opt));
         }
         public static OrderedDictionary GetRawNotes(string directory, string fn)
@@ -51,46 +57,53 @@ namespace Stepmania2BeatSaber
                             reader.ReadLine();
                             // Get Difficulty
                             GameDifficulty difficulty = Helper.FindDifficulty(Helper.GetNextLine(reader));
-                            int beatcount = 0;
-                            Helper.Output("//Found Difficulty - " + difficulty.ToString(), ConsoleColor.Yellow, DebugState.on);
-                            reader.ReadLine();
-                            reader.ReadLine();
-                            ArrayList notesByDifficulty = new();
-                            while (!reader.EndOfStream)
+                            if (GameDifficultyKeys.Contains(difficulty))
                             {
-                                bool newDifficulty = false;
-                                // Get Noteset
-                                ArrayList measure = new();
+                                int beatcount = 0;
+                                Helper.Output("//Found Difficulty - " + difficulty.ToString(), ConsoleColor.Yellow, DebugState.on);
+                                reader.ReadLine();
+                                reader.ReadLine();
+                                ArrayList notesByDifficulty = new();
                                 while (!reader.EndOfStream)
                                 {
-                                    line = Helper.GetNextLine(reader);
-                                    if (line != null)
+                                    bool newDifficulty = false;
+                                    // Get Noteset
+                                    ArrayList measure = new();
+                                    while (!reader.EndOfStream)
                                     {
-                                        if (!line.StartsWith(",") && !line.StartsWith(";"))
+                                        line = Helper.GetNextLine(reader);
+                                        if (line != null)
                                         {
-                                            RawBeat currentBeat = new();
-                                            for (Int32 i = 0; i < line.Length; i++)
+                                            if (!line.StartsWith(",") && !line.StartsWith(";"))
                                             {
-                                                RawNote rawNote = new(line, i);
-                                                currentBeat.Add(rawNote);
+                                                RawBeat currentBeat = new();
+                                                for (Int32 i = 0; i < line.Length; i++)
+                                                {
+                                                    RawNote rawNote = new(line, i);
+                                                    currentBeat.Add(rawNote);
+                                                }
+                                                measure.Add(currentBeat);
+                                                beatcount += 1;
+                                                Helper.Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
                                             }
-                                            measure.Add(currentBeat);
-                                            beatcount += 1;
-                                            Helper.Output("Note#" + beatcount.ToString("D3") + ":  " + line, ConsoleColor.Yellow);
-                                        }
-                                        else
-                                        {
-                                            if (line.StartsWith(";"))
-                                                newDifficulty = true;
-                                            break;
+                                            else
+                                            {
+                                                if (line.StartsWith(";"))
+                                                    newDifficulty = true;
+                                                break;
+                                            }
                                         }
                                     }
+                                    notesByDifficulty.Add(measure);
+                                    if (newDifficulty)
+                                        break;
                                 }
-                                notesByDifficulty.Add(measure);
-                                if (newDifficulty)
-                                    break;
+                                playCollection.Add(difficulty, notesByDifficulty);
                             }
-                            playCollection.Add(difficulty, notesByDifficulty);
+                            else
+                            {
+                                Helper.Output("//Skipping Difficulty - " + difficulty.ToString() + " - as part of config.", ConsoleColor.Yellow, DebugState.on);
+                            }
                         }
                     }
                 }
@@ -105,16 +118,7 @@ namespace Stepmania2BeatSaber
         public static OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
-            Array difficultyKeys = Enum.GetValues(typeof(GameDifficulty));
-            if(opt != null)
-            {
-                if (opt.MyGameDifficulty != GameDifficulty.all)
-                {
-                    difficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
-                }
-            }
-            
-            foreach (GameDifficulty key in difficultyKeys)
+            foreach (GameDifficulty key in GameDifficultyKeys)
             {
                 Helper.Output("Creating song: " + ((GameDifficulty)key).ToString(), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
