@@ -11,7 +11,7 @@ namespace Stepmania2BeatSaber
         static void Main()
         {
             Helper.optionsPopulate(ref opt);
-            if (opt.MyGameDifficulty != GameDifficulty.all)
+            if (opt.MyGameDifficulty != GameDifficulty.All)
             {
                 GameDifficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
             }

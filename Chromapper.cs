@@ -8,10 +8,11 @@ namespace Stepmania2BeatSaber
 {
     public class ChromapperBase
     {
-        public string _version { get; set; } = "2.2.0";
+        public string _version { get; set; } = "2.0.0";
     }
     public class ChroMap : ChromapperBase
     {
+        public new string _version { get; set; } = "2.2.0";
         public List<BSaberNote> _notes { get; set; } = new();
         public List<BSaberObstacle> _obstacles { get; set; } = new();
         public List<BSaberEvent> _events { get; set; } = new();
@@ -40,5 +41,36 @@ namespace Stepmania2BeatSaber
             }
         }
     }
- 
+    public class ChroInfo : ChromapperBase
+    {
+        public new string _version { get; set; } = "";
+        public string _songName { get; set; } = "";
+        public string _songSubName { get; set; } = "";
+        public string _songAuthorName { get; set; } = "";
+        public string _levelAuthorName { get; set; } = "";
+        public string _beatsPerMinute { get; set; } = "";
+        public string _previewStartTime { get; set; } = "";
+        public string _previewDuration { get; set; } = "";
+        public string _songTimeOffset { get; set; } = "";
+        public string _shuffle { get; set; } = "";
+        public string _shufflePeriod { get; set; } = "";
+        public string _coverImageFilename { get; set; } = "";
+        public string _songFilename { get; set; } = "";
+        public string _environmentName { get; set; } = "";
+        public string _allDirectionsEnvironmentName { get; set; } = "";
+        public string _customData { get; set; } = "";
+        public string _editors { get; set; } = "";
+        public string _lastEditedBy { get; set; } = "";
+        public string ChroMapper { get; set; } = "";
+        public string version { get; set; } = "";
+        public string _difficultyBeatmapSets { get; set; } = "";
+        public string _beatmapCharacteristicName { get; set; } = "";
+        public string _difficultyBeatmaps { get; set; } = "";
+        public string _difficulty { get; set; } = "";
+        public string _difficultyRank { get; set; } = "";
+        public string _beatmapFilename { get; set; } = "";
+        public string _noteJumpMovementSpeed { get; set; } = "";
+        public string _noteJumpStartBeatOffset { get; set; } = "";
+    }
+
 }

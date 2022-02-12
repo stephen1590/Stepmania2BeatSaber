@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Stepmania2BeatSaber
 {
@@ -74,6 +75,8 @@ namespace Stepmania2BeatSaber
         public ObstacleType _obstacleType { get; set; }
         public Width _width { get; set; }
         public double _duration { get; set; }
+
+        [JsonIgnore]
         public bool _isOpen { get; set; }
         public BSaberObstacle()
         {
@@ -86,8 +89,10 @@ namespace Stepmania2BeatSaber
     }
     public class BSaberEvent : BSaber
     {
+        //TO DO
     }
     public class BSaberWaypoint : BSaber
     {
+        //TO DO
     }
 }

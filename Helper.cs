@@ -12,20 +12,20 @@ namespace Stepmania2BeatSaber
     }
     public enum GameDifficulty
     {
-        unknown,
-        easy,
-        normal,
-        hard,
-        expert,
-        expertPlus,
-        all
+        Unknown,
+        Easy,
+        Normal,
+        Hard,
+        Expert,
+        ExpertPlus,
+        All
     }
     public class Options
     {
         public bool ResolveRepeats { get; set; } = true;
         public bool ResolveConflicts { get; set; } = true;
         public bool ApplyObstacles { get; set; } = true;
-        public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.all;
+        public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.All;
         public string WIPCustomLevelsPath { get; set; } = String.Empty;
         public string version = "0.0.1";
     }
@@ -34,13 +34,13 @@ namespace Stepmania2BeatSaber
         public static DebugState DebugState = DebugState.off;
         public static readonly Dictionary<GameDifficulty, double> DifficultyScale = new()
         {
-            { GameDifficulty.unknown, 1.0 },
-            { GameDifficulty.easy, 0.7 },
-            { GameDifficulty.normal, 0.8 },
-            { GameDifficulty.hard, 0.9 },
-            { GameDifficulty.expert, 1.0 },
-            { GameDifficulty.expertPlus, 1.1 },
-            { GameDifficulty.all, 0 }
+            { GameDifficulty.Unknown, 1.0 },
+            { GameDifficulty.Easy, 0.7 },
+            { GameDifficulty.Normal, 0.8 },
+            { GameDifficulty.Hard, 0.9 },
+            { GameDifficulty.Expert, 1.0 },
+            { GameDifficulty.ExpertPlus, 1.1 },
+            { GameDifficulty.All, 0 }
         };
         private static readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private static readonly string OptionsFileName = "SM2BS.json";
@@ -88,33 +88,29 @@ namespace Stepmania2BeatSaber
             {
                 case "Beginner":
                     {
-                        return GameDifficulty.easy;
+                        return GameDifficulty.Easy;
                     }
                 case "Easy":
                     {
-                        return GameDifficulty.normal;
+                        return GameDifficulty.Normal;
                     }
                 case "Medium":
                     {
-                        return GameDifficulty.hard;
+                        return GameDifficulty.Hard;
                     }
                 case "Hard":
                     {
-                        return GameDifficulty.expert;
+                        return GameDifficulty.Expert;
                     }
                 default:
                     {
-                        return GameDifficulty.unknown;
+                        return GameDifficulty.Unknown;
                     }
             }
         }
         /* ===================================================
          * JSON and Parsing
          =================================================== */
-        internal static JToken jTokenParse(string jsonString)
-        {
-            return JToken.Parse(jsonString);
-        }
         internal static Options optionsFromJSONGet(string jsonString)
         {
             Options items = JsonConvert.DeserializeObject<Options>(jsonString);
@@ -151,7 +147,7 @@ namespace Stepmania2BeatSaber
             string newPath = directory + @"\BeatSaber - " + songName + @"\";
             foreach (GameDifficulty key in objectToWrite.Keys)
             {
-                string filename = newPath + ((GameDifficulty)key).ToString() + basefilename;
+                string filename = ((GameDifficulty)key).ToString() + basefilename;
                 // ---------
                 var difficulty = objectToWrite[key];
                 if (difficulty != null)
@@ -170,14 +166,7 @@ namespace Stepmania2BeatSaber
                     }
                     //----------
                     ChroMap c = new("", notes, obstacles,new(),new());
-                    // ---------
-                    if (!Directory.Exists(newPath))
-                        Directory.CreateDirectory(newPath);
-                    //----------
-                    using (StreamWriter writer = new(filename, false))
-                    {
-                        writer.Write(JObject.FromObject(c).ToString());
-                    }
+                    Helper.WriteJSON(JObject.FromObject(c), newPath, filename);
                     Output("Wrote File: " + filename, ConsoleColor.Gray, DebugState.on);
                 }
             }
