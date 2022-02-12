@@ -9,12 +9,6 @@ namespace Stepmania2BeatSaber
         centerRight,
         right
     }
-    public enum IsLeftOrRightSide
-    {
-        none,
-        left,
-        right
-    }
     public enum LineLayer
     {
         bottom,
@@ -53,70 +47,47 @@ namespace Stepmania2BeatSaber
     }
     public class BSaber
     {
+        public double _time { get; set; }
+        public LineIndex _lineIndex { get; set; }
         public BSaber()
         {
-            Time = 0;
-            LineIndex = LineIndex.left;
-            IsLeftOrRightSide = IsLeftOrRightSide.none;
+            _time = 0;
+            _lineIndex = LineIndex.left;
         }
-        public double Time { get; set; }
-        public LineIndex LineIndex { get; set; }
-        public IsLeftOrRightSide IsLeftOrRightSide { get; set; }
-        //public JObject ToJOject()
-        //{
-        //    JObject retVal = new(new JProperty("_time", Time),
-        //        new JProperty("_lineIndex", LineIndex));
-        //    return retVal;
-        //}
     }
     public class BSaberNote : BSaber
     {
+        public LineLayer _lineLayer { get; set; }
+        public NoteType _noteType { get; set; }
+        public CutDirection _cutDirection { get; set; }
         public BSaberNote()
         {
-            Time = 0;
-            LineIndex = LineIndex.left;
-            LineLayer = LineLayer.bottom;
-            NoteType = NoteType.red;
-            CutDirection = CutDirection.left;
-            IsLeftOrRightSide = IsLeftOrRightSide.none;
+            _time = 0;
+            _lineIndex = LineIndex.left;
+            _lineLayer = LineLayer.bottom;
+            _noteType = NoteType.red;
+            _cutDirection = CutDirection.left;
         }
-        public LineLayer LineLayer { get; set; }
-        public NoteType NoteType { get; set; }
-        public CutDirection CutDirection { get; set; }
-
-        //public new JObject ToJOject()
-        //{
-        //    JObject retVal = new(new JProperty("_time", Time),
-        //        new JProperty("_lineIndex", LineIndex),
-        //        new JProperty("_lineLayer", LineLayer),
-        //        new JProperty("_type", NoteType),
-        //        new JProperty("_cutDirection", CutDirection));
-        //    return retVal;
-        //}
     }
     public class BSaberObstacle : BSaber
     {
+        public ObstacleType _obstacleType { get; set; }
+        public Width _width { get; set; }
+        public double _duration { get; set; }
+        public bool _isOpen { get; set; }
         public BSaberObstacle()
         {
-            Time = 0;
-            LineIndex = LineIndex.left;
-            ObstacleType = ObstacleType.one;
-            IsLeftOrRightSide = IsLeftOrRightSide.none;
-            IsOpen = false;
-            Width = Width.one;
+            _time = 0;
+            _lineIndex = LineIndex.left;
+            _obstacleType = ObstacleType.one;
+            _isOpen = false;
+            _width = Width.one;
         }
-        public ObstacleType ObstacleType { get; set; }
-        public Width Width { get; set; }
-        public double Duration { get; set; }
-        public bool IsOpen { get; set; }
-        //public new JObject ToJOject()
-        //{
-        //    JObject retVal = new(new JProperty("_time", Time),
-        //        new JProperty("_lineIndex", LineIndex),
-        //        new JProperty("_type", ObstacleType),
-        //        new JProperty("_duration", Duration),
-        //        new JProperty("_width", Width));
-        //    return retVal;
-        //}
+    }
+    public class BSaberEvent : BSaber
+    {
+    }
+    public class BSaberWaypoint : BSaber
+    {
     }
 }

@@ -31,7 +31,6 @@ namespace Stepmania2BeatSaber
     }
     static internal class Helper
     {
-        private static readonly string pChroMapperVersion = "2.2.0";
         public static DebugState DebugState = DebugState.off;
         public static readonly Dictionary<GameDifficulty, double> DifficultyScale = new()
         {
@@ -157,29 +156,27 @@ namespace Stepmania2BeatSaber
                 var difficulty = objectToWrite[key];
                 if (difficulty != null)
                 {
-                    JArray notes = new(); 
+                    List<BSaberNote> notes = new(); 
                     var temp = ((OrderedDictionary)difficulty)["notes"];
                     if (temp != null)
                     {
-                        foreach (BSaberNote n in (ArrayList)temp)
-                            notes.Add(JObject.FromObject(n));
+                        notes = (List<BSaberNote>)temp;
                     }
-                    JArray obstacles = new();
+                    List<BSaberObstacle> obstacles = new();
                     temp = ((OrderedDictionary)difficulty)["obstacles"];
                     if (temp != null)
                     {
-                        foreach (BSaberObstacle o in (ArrayList)temp)
-                            obstacles.Add(JObject.FromObject(o));
+                        obstacles= (List<BSaberObstacle>)temp;
                     }
                     //----------
-                    JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes, obstacles, new JArray(), new JArray());
+                    ChroMap c = new("", notes, obstacles,new(),new());
                     // ---------
                     if (!Directory.Exists(newPath))
                         Directory.CreateDirectory(newPath);
                     //----------
                     using (StreamWriter writer = new(filename, false))
                     {
-                        writer.Write(chroMapperJSON.ToString());
+                        writer.Write(JObject.FromObject(c).ToString());
                     }
                     Output("Wrote File: " + filename, ConsoleColor.Gray, DebugState.on);
                 }
@@ -199,14 +196,6 @@ namespace Stepmania2BeatSaber
                 Output("Unable to get next line from reader", ConsoleColor.Red, DebugState.on);
                 return "";
             }
-        }
-        public static JObject FormatJSON(string version, JArray notes, JArray obstacles, JArray events, JArray waypoints)
-        {
-            return new JObject(new JProperty("_version", version),
-                new JProperty("_notes", notes),
-                new JProperty("_obstacles", obstacles),
-                new JProperty("_events", events),
-                new JProperty("_waypoints", waypoints));
         }
         /* ===================================================
          * Debug output

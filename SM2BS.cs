@@ -122,7 +122,7 @@ namespace Stepmania2BeatSaber
             {
                 Helper.Output("Creating song: " + ((GameDifficulty)key).ToString(), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
-                ArrayList rawBeatsArray = new();
+                List<RawBeat> rawBeats = new();
                 OrderedDictionary songData = new();
                 double baseBeats = 0;
                 //Set the base beats + account for offset + scale with difficulty
@@ -153,27 +153,27 @@ namespace Stepmania2BeatSaber
                                     throw new NotImplementedException("New Note Count found - expected only 4");
                                 //Save the interval -----------------------------
                                 currentBeat.BeatTime = baseBeats;
-                                rawBeatsArray.Add(currentBeat);
+                                rawBeats.Add(currentBeat);
                                 baseBeats += interval;
                             }
                         }
                     }
                 }
                 
-                ArrayList retArray = StandardNoteParsing(rawBeatsArray);
+                List<BSaberNote> retArray = StandardNoteParsing(rawBeats);
                 songData.Add("notes", retArray);
                 //-----------
-                ArrayList obstArray = ObstaclesArray(rawBeatsArray);
+                List<BSaberObstacle> obstArray = ObstaclesParse(rawBeats);
                 songData.Add("obstacles", obstArray);
                 //-----------
                 retVal.Add(key, songData);
             }
             return retVal;
         }
-        public static ArrayList StandardNoteParsing(ArrayList rawBeatsArray)
+        public static List<BSaberNote> StandardNoteParsing(List<RawBeat> rawBeatsArray)
         {
             RawBeat previousBeat = new();
-            ArrayList retArray = new();
+            List<BSaberNote> retArray = new();
             foreach (RawBeat currentBeat in rawBeatsArray)
             {
                 //making this throw an error so I fucking read it... dog damnit morty
@@ -195,62 +195,62 @@ namespace Stepmania2BeatSaber
                             {
                                 BSaberNote note = new();
                                 if (count > 1)
-                                    note.NoteType = NoteType.blue;
+                                    note._noteType = NoteType.blue;
                                 switch (r.RawDirection)
                                 {
                                     case RawDirection.left:
                                         {
-                                            note.CutDirection = CutDirection.left;
-                                            note.LineIndex = LineIndex.left;
-                                            note.LineLayer = LineLayer.middle;
+                                            note._cutDirection = CutDirection.left;
+                                            note._lineIndex = LineIndex.left;
+                                            note._lineLayer = LineLayer.middle;
                                             break;
                                         }
                                     case RawDirection.down:
                                         {
                                             if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                             {
-                                                note.NoteType = NoteType.blue;
-                                                note.LineIndex = LineIndex.centerRight;
-                                                note.LineLayer = LineLayer.bottom;
+                                                note._noteType = NoteType.blue;
+                                                note._lineIndex = LineIndex.centerRight;
+                                                note._lineLayer = LineLayer.bottom;
                                             }
                                             else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                             {
-                                                note.LineIndex = LineIndex.centerLeft;
-                                                note.LineLayer = LineLayer.middle;
+                                                note._lineIndex = LineIndex.centerLeft;
+                                                note._lineLayer = LineLayer.middle;
                                             }
                                             else
                                             {
-                                                note.LineIndex = LineIndex.centerLeft;
+                                                note._lineIndex = LineIndex.centerLeft;
                                             }
-                                            note.CutDirection = CutDirection.down;
+                                            note._cutDirection = CutDirection.down;
                                             break;
                                         }
                                     case RawDirection.up:
                                         {
                                             if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                             {
-                                                note.NoteType = NoteType.red;
-                                                note.LineIndex = LineIndex.centerLeft;
-                                                note.LineLayer = LineLayer.top;
+                                                note._noteType = NoteType.red;
+                                                note._lineIndex = LineIndex.centerLeft;
+                                                note._lineLayer = LineLayer.top;
                                             }
                                             else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                             {
-                                                note.LineIndex = LineIndex.centerRight;
-                                                note.LineLayer = LineLayer.middle;
+                                                note._lineIndex = LineIndex.centerRight;
+                                                note._lineLayer = LineLayer.middle;
                                             }
                                             else
                                             {
-                                                note.LineIndex = LineIndex.centerRight;
-                                                note.LineLayer = LineLayer.middle;
+                                                note._lineIndex = LineIndex.centerRight;
+                                                note._lineLayer = LineLayer.middle;
                                             }
-                                            note.CutDirection = CutDirection.up;
+                                            note._cutDirection = CutDirection.up;
                                             break;
                                         }
                                     case RawDirection.right:
                                         {
-                                            note.CutDirection = CutDirection.right;
-                                            note.LineIndex = LineIndex.right;
-                                            note.LineLayer = LineLayer.middle;
+                                            note._cutDirection = CutDirection.right;
+                                            note._lineIndex = LineIndex.right;
+                                            note._lineLayer = LineLayer.middle;
                                             break;
                                         }
                                     default:
@@ -258,7 +258,7 @@ namespace Stepmania2BeatSaber
                                             throw new NotImplementedException("Too many notes. Something is critically wrong.");
                                         }
                                 }
-                                note.Time = currentBeat.BeatTime;
+                                note._time = currentBeat.BeatTime;
                                 retArray.Add(note);
                                 if (r.RawNoteType != RawNoteType.normal && r.RawNoteType != RawNoteType.holdStart && r.RawNoteType != RawNoteType.holdEnd)
                                 {
@@ -276,9 +276,9 @@ namespace Stepmania2BeatSaber
             }
             return retArray;
         }
-        public static ArrayList ObstaclesArray(ArrayList rawBeatsArray)
+        public static List<BSaberObstacle> ObstaclesParse(List<RawBeat> rawBeatsArray)
         {
-            ArrayList obstArray = new();
+            List<BSaberObstacle> obstArray = new();
             if (rawBeatsArray != null)
             {
                 BSaberObstacle oLeft = new();
@@ -295,30 +295,30 @@ namespace Stepmania2BeatSaber
                         {
                             if(r.RawDirection == RawDirection.left) { 
                                 o = oLeft;
-                                o.LineIndex = LineIndex.left;
+                                o._lineIndex = LineIndex.left;
                             }
                             else if (r.RawDirection == RawDirection.down)
                             {
                                 o = oCenterLeft;
-                                o.LineIndex = LineIndex.centerLeft;
+                                o._lineIndex = LineIndex.centerLeft;
                             }
                             else if (r.RawDirection == RawDirection.up)
                             {
                                 o = oCenterRight;
-                                o.LineIndex = LineIndex.centerRight;
+                                o._lineIndex = LineIndex.centerRight;
                             }
                             else if (r.RawDirection == RawDirection.right)
                             {
                                 o = oRight;
-                                o.LineIndex = LineIndex.right;
+                                o._lineIndex = LineIndex.right;
                             }
                             //-------------
                             if (r.RawNoteType == RawNoteType.holdStart)
                             {
-                                if (!o.IsOpen) { 
-                                    o.IsOpen = true;
-                                    o.Time = b.BeatTime;
-                                    if (o.LineIndex == LineIndex.centerLeft || o.LineIndex == LineIndex.centerRight)
+                                if (!o._isOpen) { 
+                                    o._isOpen = true;
+                                    o._time = b.BeatTime;
+                                    if (o._lineIndex == LineIndex.centerLeft || o._lineIndex == LineIndex.centerRight)
                                     {
                                         centerOccupied = true;
                                     }
@@ -328,13 +328,13 @@ namespace Stepmania2BeatSaber
                             }
                             else if (r.RawNoteType == RawNoteType.holdEnd)
                             {
-                                if (o.IsOpen)
+                                if (o._isOpen)
                                 {
-                                    o.IsOpen = false;
+                                    o._isOpen = false;
                                     if (centerOccupied)
                                         centerOccupied = false;
                                     //-------------
-                                    o.Duration = b.BeatTime - o.Time;
+                                    o._duration = b.BeatTime - o._time;
                                     obstArray.Add(o);
                                     o = new();
                                     //-------------
@@ -357,7 +357,7 @@ namespace Stepmania2BeatSaber
             }
             return obstArray;
         }
-        public static void RepeatNoteParsing(RawBeat currentBeat, ref RawBeat previousBeat, ref ArrayList retArray)
+        public static void RepeatNoteParsing(RawBeat currentBeat, ref RawBeat previousBeat, ref List<BSaberNote> retArray)
         {
             char[] saveMask = currentBeat.Mask.ToCharArray();
             //New Pattern
@@ -369,7 +369,7 @@ namespace Stepmania2BeatSaber
                 {
                     BSaberNote note = new();
                     if (count > 1)
-                        note.NoteType = NoteType.blue;
+                        note._noteType = NoteType.blue;
                     //------------------------
                     if (currentBeat.RepeatException != RepeatException.none)
                     {
@@ -387,31 +387,31 @@ namespace Stepmania2BeatSaber
                         {
                             case RawDirection.left:
                                 {
-                                    note.CutDirection = CutDirection.right;
-                                    note.LineIndex = LineIndex.centerLeft;
+                                    note._cutDirection = CutDirection.right;
+                                    note._lineIndex = LineIndex.centerLeft;
                                     saveMask[count] = 'o';
-                                    note.LineLayer = LineLayer.middle;
+                                    note._lineLayer = LineLayer.middle;
                                     break;
                                 }
                             case RawDirection.down:
                                 {
                                     if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                     {
-                                        note.NoteType = NoteType.blue;
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.bottom;
+                                        note._noteType = NoteType.blue;
+                                        note._lineIndex = LineIndex.centerRight;
+                                        note._lineLayer = LineLayer.bottom;
                                     }
                                     else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                     {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
+                                        note._lineIndex = LineIndex.centerLeft;
+                                        note._lineLayer = LineLayer.middle;
                                     }
                                     else
                                     {
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
+                                        note._lineIndex = LineIndex.centerLeft;
+                                        note._lineLayer = LineLayer.middle;
                                     }
-                                    note.CutDirection = CutDirection.up;
+                                    note._cutDirection = CutDirection.up;
                                     saveMask[count] = 'x';
                                     break;
                                 }
@@ -419,32 +419,32 @@ namespace Stepmania2BeatSaber
                                 {
                                     if (currentBeat.ConflictType == ConflictType.doubleHandConflict)
                                     {
-                                        note.NoteType = NoteType.red;
-                                        note.LineIndex = LineIndex.centerLeft;
-                                        note.LineLayer = LineLayer.middle;
+                                        note._noteType = NoteType.red;
+                                        note._lineIndex = LineIndex.centerLeft;
+                                        note._lineLayer = LineLayer.middle;
                                     }
                                     else if (currentBeat.ConflictType == ConflictType.verticalSplit)
                                     {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.middle;
+                                        note._lineIndex = LineIndex.centerRight;
+                                        note._lineLayer = LineLayer.middle;
                                     }
                                     else
                                     {
-                                        note.LineIndex = LineIndex.centerRight;
-                                        note.LineLayer = LineLayer.top;
+                                        note._lineIndex = LineIndex.centerRight;
+                                        note._lineLayer = LineLayer.top;
                                     }
                                     //----------------
-                                    note.CutDirection = CutDirection.down;
-                                    note.LineLayer = LineLayer.middle;
+                                    note._cutDirection = CutDirection.down;
+                                    note._lineLayer = LineLayer.middle;
                                     saveMask[count] = 'x';
                                     break;
                                 }
                             case RawDirection.right:
                                 {
-                                    note.CutDirection = CutDirection.left;
-                                    note.LineIndex = LineIndex.centerRight;
+                                    note._cutDirection = CutDirection.left;
+                                    note._lineIndex = LineIndex.centerRight;
                                     saveMask[count] = 'o';
-                                    note.LineLayer = LineLayer.middle;
+                                    note._lineLayer = LineLayer.middle;
                                     break;
                                 }
                             default:
@@ -453,7 +453,7 @@ namespace Stepmania2BeatSaber
                                 }
                         }
                     }
-                    note.Time = currentBeat.BeatTime;
+                    note._time = currentBeat.BeatTime;
                     retArray.Add(note);
                     if (r.RawNoteType != RawNoteType.normal && r.RawNoteType != RawNoteType.holdStart && r.RawNoteType != RawNoteType.holdEnd)
                     {
@@ -474,10 +474,10 @@ namespace Stepmania2BeatSaber
             {
                 case RawDirection.left:
                     {
-                        note.CutDirection = CutDirection.down;
-                        note.LineIndex = LineIndex.centerLeft;
+                        note._cutDirection = CutDirection.down;
+                        note._lineIndex = LineIndex.centerLeft;
                         saveMask[count] = 'o';
-                        note.LineLayer = LineLayer.bottom;
+                        note._lineLayer = LineLayer.bottom;
                         break;
                     }
                 case RawDirection.down:
@@ -490,10 +490,10 @@ namespace Stepmania2BeatSaber
                     }
                 case RawDirection.right:
                     {
-                        note.CutDirection = CutDirection.down;
-                        note.LineIndex = LineIndex.centerRight;
+                        note._cutDirection = CutDirection.down;
+                        note._lineIndex = LineIndex.centerRight;
                         saveMask[count] = 'o';
-                        note.LineLayer = LineLayer.bottom;
+                        note._lineLayer = LineLayer.bottom;
                         break;
                     }
                 default:
@@ -512,16 +512,16 @@ namespace Stepmania2BeatSaber
                     }
                 case RawDirection.down:
                     {
-                        note.LineIndex = LineIndex.centerLeft;
-                        note.CutDirection = CutDirection.up;
+                        note._lineIndex = LineIndex.centerLeft;
+                        note._cutDirection = CutDirection.up;
                         saveMask[count] = 'x';
                         break;
                     }
                 case RawDirection.up:
                     {
-                        note.LineIndex = LineIndex.centerRight;
-                        note.CutDirection = CutDirection.down;
-                        note.LineLayer = LineLayer.middle;
+                        note._lineIndex = LineIndex.centerRight;
+                        note._cutDirection = CutDirection.down;
+                        note._lineLayer = LineLayer.middle;
                         saveMask[count] = 'x';
                         break;
                     }

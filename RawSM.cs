@@ -38,6 +38,12 @@ namespace Stepmania2BeatSaber
         holdEnd,
         unknown
     }
+    public enum IsLeftOrRightSide
+    {
+        none,
+        left,
+        right
+    }
     public class RawBeat
     {
         public ArrayList RawNoteArray;
