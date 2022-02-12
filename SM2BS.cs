@@ -5,10 +5,11 @@ namespace Stepmania2BeatSaber
 {
     public static class SM2BS
     {
+        private static Options opt = new();
         [STAThread]
         static void Main()
         {
-            OptionsHelper opt = new();
+            Helper.optionsPopulate(ref opt);
             Application.Run(new SM2BSUI(ref opt));
         }
         public static OrderedDictionary GetRawNotes(string directory, string fn)
@@ -104,7 +105,16 @@ namespace Stepmania2BeatSaber
         public static OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
-            foreach (GameDifficulty key in allData.Keys)
+            Array difficultyKeys = Enum.GetValues(typeof(GameDifficulty));
+            if(opt != null)
+            {
+                if (opt.MyGameDifficulty != GameDifficulty.all)
+                {
+                    difficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
+                }
+            }
+            
+            foreach (GameDifficulty key in difficultyKeys)
             {
                 Helper.Output("Creating song: " + ((GameDifficulty)key).ToString(), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();

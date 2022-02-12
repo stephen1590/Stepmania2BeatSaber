@@ -10,10 +10,81 @@ namespace Stepmania2BeatSaber
         off,
         on
     }
+    public enum GameDifficulty
+    {
+        unknown,
+        easy,
+        normal,
+        hard,
+        expert,
+        expertPlus,
+        all
+    }
+    public class Options
+    {
+        public bool ResolveRepeats { get; set; } = true;
+        public bool ResolveConflicts { get; set; } = true;
+        public bool ApplyObstacles { get; set; } = true;
+        public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.all;
+        public string WIPCustomLevelsPath { get; set; } = String.Empty;
+
+        public string version = "0.0.1";
+    }
     static internal class Helper
     {
         private static readonly string pChroMapperVersion = "2.2.0";
         public static DebugState DebugState = DebugState.off;
+        public static readonly Dictionary<GameDifficulty, double> DifficultyScale = new()
+        {
+            { GameDifficulty.unknown, 1.0 },
+            { GameDifficulty.easy, 0.7 },
+            { GameDifficulty.normal, 0.8 },
+            { GameDifficulty.hard, 0.9 },
+            { GameDifficulty.expert, 1.0 },
+            { GameDifficulty.expertPlus, 1.1 },
+            { GameDifficulty.all, 0 }
+        };
+
+        private static readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
+        private static readonly string OptionsFileName = "SM2BS.json";
+        /* ===================================================
+        * Options Handler
+        =================================================== */
+        public static void optionsPopulate(ref Options options)
+        {
+            bool newOptions = false;
+            if (File.Exists(AppDir + "\\" + OptionsFileName))
+            {
+                String settingsAsJSONString = Helper.ReadFile(AppDir, OptionsFileName);
+                if (settingsAsJSONString == string.Empty)
+                {
+                    newOptions = true;
+                }
+                options = Helper.optionsFromJSONGet(settingsAsJSONString);
+                Console.WriteLine("Config succesfully loaded from AppData.");
+            }
+            else
+            {
+                newOptions = true;
+            }
+            if (newOptions)
+            {
+                //There is an automatic NEW if we have a null options
+                optionsSave(ref options);
+            }
+        }
+        public static void optionsSave(ref Options options)
+        {
+            if (options == null)
+            {
+                options = new();
+                Console.WriteLine("No Config found. Create a new one.");
+            }
+            Helper.WriteJSON(JObject.FromObject(options), AppDir, OptionsFileName);
+        }
+        /* ===================================================
+        * Misc
+        =================================================== */
         public static GameDifficulty FindDifficulty(string difficulty)
         {
             switch (difficulty.Split(":")[0].Trim())
@@ -40,6 +111,9 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
+        /* ===================================================
+         * JSON and Parsing
+         =================================================== */
         internal static JToken jTokenParse(string jsonString)
         {
             return JToken.Parse(jsonString);
@@ -47,10 +121,10 @@ namespace Stepmania2BeatSaber
         internal static Options optionsFromJSONGet(string jsonString)
         {
             Options items = JsonConvert.DeserializeObject<Options>(jsonString);
-            if(items == null)
+            if (items == null)
             {
                 items = new Options();
-            }
+            }           
             return items;
         }
         internal static string ReadFile(string dir, string optionsFileName)
@@ -136,6 +210,9 @@ namespace Stepmania2BeatSaber
                 new JProperty("_events", events),
                 new JProperty("_waypoints", waypoints));
         }
+        /* ===================================================
+         * Debug output
+         =================================================== */
         public static void Output(string outputString, ConsoleColor color)
         {
             Output(outputString, color, DebugState);
