@@ -27,7 +27,6 @@ namespace Stepmania2BeatSaber
         public bool ApplyObstacles { get; set; } = true;
         public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.all;
         public string WIPCustomLevelsPath { get; set; } = String.Empty;
-
         public string version = "0.0.1";
     }
     static internal class Helper

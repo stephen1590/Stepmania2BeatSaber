@@ -68,7 +68,6 @@ namespace Stepmania2BeatSaber
                 }
             }
         }
-
         private void Execute_Click(object sender, EventArgs e)
         {
             if(fileBox.Text == string.Empty)
@@ -117,16 +116,13 @@ namespace Stepmania2BeatSaber
                
             }
         }
-
         private void consoleOutputWindow_TextChanged(object sender, EventArgs e)
         {
         }
-
         private void Stepmania2BeatSaberUI_Load(object sender, EventArgs e)
         {
             Console.SetOut(new TextBoxWriter(consoleOutputWindow));    
         }
-
         private void fileBox_TextChanged(object sender, EventArgs e)
         {
             if(fileBox.Text.EndsWith(".sm"))
@@ -138,7 +134,6 @@ namespace Stepmania2BeatSaber
                 ExecuteButton.Enabled = false;
             }
         }
-
         private void openOutputButton_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(pDir + "\\" + "BeatSaber - " + pSongName))
@@ -146,7 +141,6 @@ namespace Stepmania2BeatSaber
                 System.Diagnostics.Process.Start("explorer.exe", pDir + "\\" + "BeatSaber - " + pSongName);
             }
         }
-
         private void saveConfigButton_Click(object sender, EventArgs e)
         {
             if (pOptions != null)
@@ -161,7 +155,6 @@ namespace Stepmania2BeatSaber
                 saveConfigButton.Enabled = false;
             }
         }
-
         private void fixRepeatsBox_CheckedChanged(object sender, EventArgs e)
         {
             if(pOptions != null)
@@ -169,7 +162,6 @@ namespace Stepmania2BeatSaber
                 saveConfigButton.Enabled = true;
             }
         }
-
         private void includeObstaclesBox_CheckedChanged(object sender, EventArgs e)
         {
             if (pOptions != null)
@@ -177,7 +169,6 @@ namespace Stepmania2BeatSaber
                 saveConfigButton.Enabled = true;
             }
         }
-
         private void lessConflictsBox_CheckedChanged(object sender, EventArgs e)
         {
             if (pOptions != null)
@@ -185,7 +176,6 @@ namespace Stepmania2BeatSaber
                 saveConfigButton.Enabled = true;
             }
         }
-
         private void WIPCustomLevelsDir_Click(object sender, EventArgs e)
         {
             if (setBSaberDirBrowser.ShowDialog() == DialogResult.OK)
@@ -199,7 +189,6 @@ namespace Stepmania2BeatSaber
                 }
             }
         }
-        
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(pOptions != null)
@@ -215,13 +204,11 @@ namespace Stepmania2BeatSaber
         {
             _output = output;
         }
-
         public override void Write(char value)
         {
             base.Write(value);
             _output.AppendText(value.ToString());
         }
-
         public override Encoding Encoding
         {
             get { return System.Text.Encoding.UTF8; }
