@@ -22,7 +22,7 @@ namespace Stepmania2BeatSaber
             {
                 _version = v;
             } 
-            if (n != null)
+            if(n != null)
             {
                 _notes = n;
             }
