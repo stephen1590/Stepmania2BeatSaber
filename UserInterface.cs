@@ -17,23 +17,22 @@ namespace Stepmania2BeatSaber
         private string pDir = @"C:\src\BeatSaber";
         private string pFilename = String.Empty;
         private string pSongName = String.Empty;
-        private Options pOptions;
-        public UserInterface(ref Options opt)
+        private readonly SM2BS s = new();
+        public UserInterface()
         {
-            pOptions = opt;
             InitializeComponent();
             optionsSetup();
         }
         private void optionsSetup()
         {
-            if (pOptions != null && pOptions != null)
+            if (s.options != null && s.options != null)
             {
                 comboBox1.DataSource = Enum.GetValues(typeof(GameDifficulty));
-                comboBox1.SelectedIndex = (int)pOptions.MyGameDifficulty;
+                comboBox1.SelectedIndex = (int)s.options.MyGameDifficulty;
                 //-----
-                fixRepeatsBox.Checked = pOptions.ResolveRepeats;
-                includeObstaclesBox.Checked = pOptions.ApplyObstacles;
-                lessConflictsBox.Checked = pOptions.ResolveConflicts;
+                fixRepeatsBox.Checked = s.options.ResolveRepeats;
+                includeObstaclesBox.Checked = s.options.ApplyObstacles;
+                lessConflictsBox.Checked = s.options.ResolveConflicts;
             }
 
         }
@@ -76,6 +75,11 @@ namespace Stepmania2BeatSaber
             }
             else
             {
+                if (saveConfigButton.Enabled)
+                {
+                    //we might have new options that the user forgot to commit
+                    saveConfig();
+                }
                 pFilename = Path.GetFileName(fileBox.Text);
                 var d = Path.GetDirectoryName(fileBox.Text);
                 if (d != null)
@@ -88,7 +92,7 @@ namespace Stepmania2BeatSaber
                         pSongName = pFilename.Split(".")[0];
                         double bpm = 0.0;
                         double offset = 0.0;
-                        OrderedDictionary rawDAta = SM2BS.GetRawNotes(pDir, pFilename);
+                        OrderedDictionary rawDAta = s.GetRawNotes(pDir, pFilename);
                         if (rawDAta != null && rawDAta.Keys.Count > 0)
                         {
                             var temp = rawDAta["offset"];
@@ -106,7 +110,7 @@ namespace Stepmania2BeatSaber
                             temp = rawDAta["songs"];
                             if (temp != null)
                             {
-                                var songs = SM2BS.CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
+                                var songs = s.CreatBeatSabreEquivalent((OrderedDictionary)temp, offset, bpm);
                                 Helper.WriteSongs(songs, pDir, pSongName);
                             }
                             openOutputButton.Enabled = true;
@@ -143,35 +147,39 @@ namespace Stepmania2BeatSaber
         }
         private void saveConfigButton_Click(object sender, EventArgs e)
         {
-            if (pOptions != null)
+            saveConfig();
+        }
+        public void saveConfig()
+        {
+            if (s.options != null)
             {
 
-                pOptions.MyGameDifficulty = (GameDifficulty)comboBox1.SelectedIndex; 
-                pOptions.ResolveRepeats = fixRepeatsBox.Checked;
-                pOptions.ApplyObstacles = includeObstaclesBox.Checked;
-                pOptions.ResolveConflicts = lessConflictsBox.Checked;
-                Helper.optionsSave(ref pOptions);
+                s.options.MyGameDifficulty = (GameDifficulty)comboBox1.SelectedIndex;
+                s.options.ResolveRepeats = fixRepeatsBox.Checked;
+                s.options.ApplyObstacles = includeObstaclesBox.Checked;
+                s.options.ResolveConflicts = lessConflictsBox.Checked;
+                Helper.optionsSave(ref s.options);
                 Console.WriteLine("Config Saved to AppData.");
                 saveConfigButton.Enabled = false;
             }
         }
         private void fixRepeatsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if(pOptions != null)
+            if(s.options != null)
             {
                 saveConfigButton.Enabled = true;
             }
         }
         private void includeObstaclesBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (pOptions != null)
+            if (s.options != null)
             {
                 saveConfigButton.Enabled = true;
             }
         }
         private void lessConflictsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (pOptions != null)
+            if (s.options != null)
             {
                 saveConfigButton.Enabled = true;
             }
@@ -180,9 +188,9 @@ namespace Stepmania2BeatSaber
         {
             if (setBSaberDirBrowser.ShowDialog() == DialogResult.OK)
             {
-                if (pOptions != null && pOptions != null && setBSaberDirBrowser.SelectedPath != String.Empty)
+                if (s.options != null && s.options != null && setBSaberDirBrowser.SelectedPath != String.Empty)
                 {
-                    pOptions.WIPCustomLevelsPath = setBSaberDirBrowser.SelectedPath;
+                    s.options.WIPCustomLevelsPath = setBSaberDirBrowser.SelectedPath;
                     Console.Write("Beat Saber Directory Selected: ");
                     Console.WriteLine(setBSaberDirBrowser.SelectedPath);
                     saveConfigButton.Enabled = true;
@@ -191,7 +199,7 @@ namespace Stepmania2BeatSaber
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(pOptions != null)
+            if(s.options != null)
             {
                 saveConfigButton.Enabled = true;
             }

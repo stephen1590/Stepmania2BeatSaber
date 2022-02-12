@@ -3,22 +3,40 @@ using System.Collections.Specialized;
 
 namespace Stepmania2BeatSaber
 {
-    public static class SM2BS
+    internal class Stepmania2BeatSaber
     {
-        private static Options opt = new();
-        private static GameDifficulty[] GameDifficultyKeys = (GameDifficulty[])Enum.GetValues(typeof(GameDifficulty));
         [STAThread]
-        static void Main()
+        public static void Main()
         {
-            Helper.optionsPopulate(ref opt);
-            if (opt.MyGameDifficulty != GameDifficulty.All)
-            {
-                GameDifficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
-            }
-
-            Application.Run(new UserInterface(ref opt));
+            //Run the UI
+            Application.Run(new UserInterface());
         }
-        public static OrderedDictionary GetRawNotes(string directory, string fn)
+    }
+    public class SM2BS
+    {
+        public Options options = new();
+        private List<GameDifficulty> GameDifficultyKeys = new()
+        {
+            GameDifficulty.Easy,
+            GameDifficulty.Normal,
+            GameDifficulty.Hard,
+            GameDifficulty.Expert,
+            GameDifficulty.ExpertPlus
+        };
+        public SM2BS()
+        {
+            Helper.optionsPopulate(ref options);
+        }
+        private List<GameDifficulty> DifficultiesFromOptions()
+        {
+            List<GameDifficulty> difficulties = GameDifficultyKeys;
+            if (options.MyGameDifficulty != GameDifficulty.All)
+            {
+                difficulties = new List<GameDifficulty> { options.MyGameDifficulty };
+            }
+            return difficulties;
+        }
+        public OrderedDictionary GetRawNotes(string directory, string fn)
         {
             Helper.Output("Reading data...", ConsoleColor.Cyan, DebugState.on);
             OrderedDictionary playCollection = new();
@@ -57,7 +75,8 @@ namespace Stepmania2BeatSaber
                             reader.ReadLine();
                             // Get Difficulty
                             GameDifficulty difficulty = Helper.FindDifficulty(Helper.GetNextLine(reader));
-                            if (GameDifficultyKeys.Contains(difficulty))
+                            List<GameDifficulty> difficulties = DifficultiesFromOptions();
+                            if (difficulties.Contains(difficulty))
                             {
                                 int beatcount = 0;
                                 Helper.Output("//Found Difficulty - " + difficulty.ToString(), ConsoleColor.Yellow, DebugState.on);
@@ -115,10 +134,11 @@ namespace Stepmania2BeatSaber
             }
             return retHash;
         }
-        public static OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
+        public OrderedDictionary CreatBeatSabreEquivalent(OrderedDictionary allData, double offset, double bpm)
         {
             OrderedDictionary retVal = new();
-            foreach (GameDifficulty key in GameDifficultyKeys)
+            List<GameDifficulty> difficulties = DifficultiesFromOptions();
+            foreach (GameDifficulty key in difficulties)
             {
                 Helper.Output("Creating song: " + ((GameDifficulty)key).ToString(), ConsoleColor.Cyan, DebugState.on);
                 ArrayList notesByDifficulty = new();
@@ -357,7 +377,7 @@ namespace Stepmania2BeatSaber
             }
             return obstArray;
         }
-        public static void RepeatNoteParsing(RawBeat currentBeat, ref RawBeat previousBeat, ref List<BSaberNote> retArray)
+        private static void RepeatNoteParsing(RawBeat currentBeat, ref RawBeat previousBeat, ref List<BSaberNote> retArray)
         {
             char[] saveMask = currentBeat.Mask.ToCharArray();
             //New Pattern
@@ -468,7 +488,7 @@ namespace Stepmania2BeatSaber
                 previousBeat = currentBeat;
             }
         }
-        public static void RepeatExceptionsHandle_DoubleOut(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
+        private static void RepeatExceptionsHandle_DoubleOut(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
         {
             switch (r.RawDirection)
             {
@@ -502,7 +522,7 @@ namespace Stepmania2BeatSaber
                     }
             }
         }
-        public static void RepeatExceptionsHandle_UpDown(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
+        private static void RepeatExceptionsHandle_UpDown(ref RawNote r, ref BSaberNote note, ref char[] saveMask, ref int count)
         {
             switch (r.RawDirection)
             {
