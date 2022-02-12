@@ -6,7 +6,7 @@ namespace Stepmania2BeatSaber
     public static class SM2BS
     {
         private static Options opt = new();
-        public static GameDifficulty[] GameDifficultyKeys = (GameDifficulty[])Enum.GetValues(typeof(GameDifficulty));
+        private static GameDifficulty[] GameDifficultyKeys = (GameDifficulty[])Enum.GetValues(typeof(GameDifficulty));
         [STAThread]
         static void Main()
         {
@@ -16,7 +16,7 @@ namespace Stepmania2BeatSaber
                 GameDifficultyKeys = new GameDifficulty[] { opt.MyGameDifficulty };
             }
 
-            Application.Run(new SM2BSUI(ref opt));
+            Application.Run(new UserInterface(ref opt));
         }
         public static OrderedDictionary GetRawNotes(string directory, string fn)
         {

@@ -12,13 +12,13 @@ using System.Collections.Specialized;
 
 namespace Stepmania2BeatSaber
 {
-    public partial class SM2BSUI : Form
+    public partial class UserInterface : Form
     {
         private string pDir = @"C:\src\BeatSaber";
         private string pFilename = String.Empty;
         private string pSongName = String.Empty;
         private Options pOptions;
-        public SM2BSUI(ref Options opt)
+        public UserInterface(ref Options opt)
         {
             pOptions = opt;
             InitializeComponent();

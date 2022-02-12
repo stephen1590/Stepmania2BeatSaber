@@ -43,7 +43,6 @@ namespace Stepmania2BeatSaber
             { GameDifficulty.expertPlus, 1.1 },
             { GameDifficulty.all, 0 }
         };
-
         private static readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private static readonly string OptionsFileName = "SM2BS.json";
         /* ===================================================
@@ -163,14 +162,14 @@ namespace Stepmania2BeatSaber
                     if (temp != null)
                     {
                         foreach (BSaberNote n in (ArrayList)temp)
-                            notes.Add(n.ToJOject());
+                            notes.Add(JObject.FromObject(n));
                     }
                     JArray obstacles = new();
                     temp = ((OrderedDictionary)difficulty)["obstacles"];
                     if (temp != null)
                     {
                         foreach (BSaberObstacle o in (ArrayList)temp)
-                            obstacles.Add(o.ToJOject());
+                            obstacles.Add(JObject.FromObject(o));
                     }
                     //----------
                     JObject chroMapperJSON = FormatJSON(pChroMapperVersion, notes, obstacles, new JArray(), new JArray());

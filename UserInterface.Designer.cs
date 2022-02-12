@@ -1,6 +1,6 @@
 ﻿namespace Stepmania2BeatSaber
 {
-    partial class SM2BSUI
+    partial class UserInterface
     {
         /// <summary>
         /// Required designer variable.
