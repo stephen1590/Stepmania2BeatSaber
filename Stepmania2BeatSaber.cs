@@ -354,7 +354,7 @@ namespace Stepmania2BeatSaber
                             case RawDirection.up:
                                 {
                                     note._lineIndex = LineIndex.centerRight;
-                                    note._lineLayer = LineLayer.middle;
+                                    note._cutDirection = CutDirection.up;
                                     break;
                                 }
                             case RawDirection.right:
