@@ -25,6 +25,7 @@ namespace Stepmania2BeatSaber
         public bool ResolveRepeats { get; set; } = true;
         public bool ResolveConflicts { get; set; } = true;
         public bool ApplyObstacles { get; set; } = true;
+        public bool TranslatePatterns { get; set; } = true;
         public GameDifficulty MyGameDifficulty { get; set; } = GameDifficulty.All;
         public string WIPCustomLevelsPath { get; set; } = String.Empty;
         public string version = "0.0.1";
@@ -149,25 +150,28 @@ namespace Stepmania2BeatSaber
             {
                 string filename = ((GameDifficulty)key).ToString() + basefilename;
                 // ---------
-                var difficulty = objectToWrite[key];
-                if (difficulty != null)
+                if (objectToWrite.Contains(key))
                 {
-                    List<BSaberNote> notes = new(); 
-                    var temp = ((OrderedDictionary)difficulty)["notes"];
-                    if (temp != null)
+                    var difficulty = objectToWrite[key];
+                    if (difficulty != null)
                     {
-                        notes = (List<BSaberNote>)temp;
+                        List<BSaberNote> notes = new(); 
+                        var temp = ((OrderedDictionary)difficulty)["notes"];
+                        if (temp != null)
+                        {
+                            notes = (List<BSaberNote>)temp;
+                        }
+                        List<BSaberObstacle> obstacles = new();
+                        temp = ((OrderedDictionary)difficulty)["obstacles"];
+                        if (temp != null)
+                        {
+                            obstacles= (List<BSaberObstacle>)temp;
+                        }
+                        //----------
+                        ChroMap c = new("", notes, obstacles,new(),new());
+                        Helper.WriteJSON(JObject.FromObject(c), newPath, filename);
+                        Output("Wrote File: " + filename, ConsoleColor.Gray, DebugState.on);
                     }
-                    List<BSaberObstacle> obstacles = new();
-                    temp = ((OrderedDictionary)difficulty)["obstacles"];
-                    if (temp != null)
-                    {
-                        obstacles= (List<BSaberObstacle>)temp;
-                    }
-                    //----------
-                    ChroMap c = new("", notes, obstacles,new(),new());
-                    Helper.WriteJSON(JObject.FromObject(c), newPath, filename);
-                    Output("Wrote File: " + filename, ConsoleColor.Gray, DebugState.on);
                 }
             }
         }

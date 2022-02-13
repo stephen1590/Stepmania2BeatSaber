@@ -25,14 +25,15 @@ namespace Stepmania2BeatSaber
         }
         private void optionsSetup()
         {
-            if (s.options != null && s.options != null)
+            if (s.o != null && s.o != null)
             {
                 comboBox1.DataSource = Enum.GetValues(typeof(GameDifficulty));
-                comboBox1.SelectedIndex = (int)s.options.MyGameDifficulty;
+                comboBox1.SelectedIndex = (int)s.o.MyGameDifficulty;
                 //-----
-                fixRepeatsBox.Checked = s.options.ResolveRepeats;
-                includeObstaclesBox.Checked = s.options.ApplyObstacles;
-                lessConflictsBox.Checked = s.options.ResolveConflicts;
+                fixRepeatsBox.Checked = s.o.ResolveRepeats;
+                includeObstaclesBox.Checked = s.o.ApplyObstacles;
+                lessConflictsBox.Checked = s.o.ResolveConflicts;
+                translateCheckBox.Checked = s.o.TranslatePatterns;
             }
 
         }
@@ -151,35 +152,36 @@ namespace Stepmania2BeatSaber
         }
         public void saveConfig()
         {
-            if (s.options != null)
+            if (s.o != null)
             {
 
-                s.options.MyGameDifficulty = (GameDifficulty)comboBox1.SelectedIndex;
-                s.options.ResolveRepeats = fixRepeatsBox.Checked;
-                s.options.ApplyObstacles = includeObstaclesBox.Checked;
-                s.options.ResolveConflicts = lessConflictsBox.Checked;
-                Helper.optionsSave(ref s.options);
+                s.o.MyGameDifficulty = (GameDifficulty)comboBox1.SelectedIndex;
+                s.o.ResolveRepeats = fixRepeatsBox.Checked;
+                s.o.ApplyObstacles = includeObstaclesBox.Checked;
+                s.o.ResolveConflicts = lessConflictsBox.Checked;
+                s.o.TranslatePatterns = translateCheckBox.Checked;
+                Helper.optionsSave(ref s.o);
                 Console.WriteLine("Config Saved to AppData.");
                 saveConfigButton.Enabled = false;
             }
         }
         private void fixRepeatsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if(s.options != null)
+            if(s.o != null)
             {
                 saveConfigButton.Enabled = true;
             }
         }
         private void includeObstaclesBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (s.options != null)
+            if (s.o != null)
             {
                 saveConfigButton.Enabled = true;
             }
         }
         private void lessConflictsBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (s.options != null)
+            if (s.o != null)
             {
                 saveConfigButton.Enabled = true;
             }
@@ -188,9 +190,9 @@ namespace Stepmania2BeatSaber
         {
             if (setBSaberDirBrowser.ShowDialog() == DialogResult.OK)
             {
-                if (s.options != null && s.options != null && setBSaberDirBrowser.SelectedPath != String.Empty)
+                if (s.o != null && s.o != null && setBSaberDirBrowser.SelectedPath != String.Empty)
                 {
-                    s.options.WIPCustomLevelsPath = setBSaberDirBrowser.SelectedPath;
+                    s.o.WIPCustomLevelsPath = setBSaberDirBrowser.SelectedPath;
                     Console.Write("Beat Saber Directory Selected: ");
                     Console.WriteLine(setBSaberDirBrowser.SelectedPath);
                     saveConfigButton.Enabled = true;
@@ -199,7 +201,15 @@ namespace Stepmania2BeatSaber
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(s.options != null)
+            if(s.o != null)
+            {
+                saveConfigButton.Enabled = true;
+            }
+        }
+
+        private void translateCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (s.o != null)
             {
                 saveConfigButton.Enabled = true;
             }

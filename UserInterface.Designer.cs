@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.LoadFileButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.ExecuteButton = new System.Windows.Forms.Button();
@@ -43,6 +42,7 @@
             this.includeObstaclesBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.WIPCustomLevelsDir = new System.Windows.Forms.Button();
+            this.translateCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // LoadFileButton
@@ -112,7 +112,7 @@
             this.saveConfigButton.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.saveConfigButton.Enabled = false;
             this.saveConfigButton.ForeColor = System.Drawing.SystemColors.Control;
-            this.saveConfigButton.Location = new System.Drawing.Point(404, 266);
+            this.saveConfigButton.Location = new System.Drawing.Point(404, 259);
             this.saveConfigButton.Name = "saveConfigButton";
             this.saveConfigButton.Size = new System.Drawing.Size(126, 23);
             this.saveConfigButton.TabIndex = 6;
@@ -123,17 +123,17 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(408, 133);
+            this.comboBox1.Location = new System.Drawing.Point(404, 101);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 23);
             this.comboBox1.TabIndex = 7;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-            //
+            // 
             // fixRepeatsBox
             // 
             this.fixRepeatsBox.AutoSize = true;
             this.fixRepeatsBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.fixRepeatsBox.Location = new System.Drawing.Point(409, 162);
+            this.fixRepeatsBox.Location = new System.Drawing.Point(404, 155);
             this.fixRepeatsBox.Name = "fixRepeatsBox";
             this.fixRepeatsBox.Size = new System.Drawing.Size(85, 19);
             this.fixRepeatsBox.TabIndex = 8;
@@ -145,7 +145,7 @@
             // 
             this.lessConflictsBox.AutoSize = true;
             this.lessConflictsBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.lessConflictsBox.Location = new System.Drawing.Point(409, 187);
+            this.lessConflictsBox.Location = new System.Drawing.Point(404, 180);
             this.lessConflictsBox.Name = "lessConflictsBox";
             this.lessConflictsBox.Size = new System.Drawing.Size(98, 19);
             this.lessConflictsBox.TabIndex = 9;
@@ -157,7 +157,7 @@
             // 
             this.includeObstaclesBox.AutoSize = true;
             this.includeObstaclesBox.ForeColor = System.Drawing.SystemColors.Control;
-            this.includeObstaclesBox.Location = new System.Drawing.Point(410, 212);
+            this.includeObstaclesBox.Location = new System.Drawing.Point(404, 205);
             this.includeObstaclesBox.Name = "includeObstaclesBox";
             this.includeObstaclesBox.Size = new System.Drawing.Size(119, 19);
             this.includeObstaclesBox.TabIndex = 10;
@@ -169,7 +169,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(410, 105);
+            this.label1.Location = new System.Drawing.Point(404, 81);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 15);
             this.label1.TabIndex = 11;
@@ -179,7 +179,7 @@
             // 
             this.WIPCustomLevelsDir.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.WIPCustomLevelsDir.ForeColor = System.Drawing.SystemColors.Control;
-            this.WIPCustomLevelsDir.Location = new System.Drawing.Point(404, 237);
+            this.WIPCustomLevelsDir.Location = new System.Drawing.Point(404, 230);
             this.WIPCustomLevelsDir.Name = "WIPCustomLevelsDir";
             this.WIPCustomLevelsDir.Size = new System.Drawing.Size(126, 23);
             this.WIPCustomLevelsDir.TabIndex = 12;
@@ -187,12 +187,26 @@
             this.WIPCustomLevelsDir.UseVisualStyleBackColor = false;
             this.WIPCustomLevelsDir.Click += new System.EventHandler(this.WIPCustomLevelsDir_Click);
             // 
-            // SM2BSUI
+            // translateCheckBox
+            // 
+            this.translateCheckBox.AutoSize = true;
+            this.translateCheckBox.ForeColor = System.Drawing.SystemColors.Control;
+            this.translateCheckBox.Location = new System.Drawing.Point(404, 130);
+            this.translateCheckBox.Name = "translateCheckBox";
+            this.translateCheckBox.Size = new System.Drawing.Size(118, 19);
+            this.translateCheckBox.TabIndex = 13;
+            this.translateCheckBox.Text = "Translate Patterns";
+            this.translateCheckBox.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.translateCheckBox.UseVisualStyleBackColor = true;
+            this.translateCheckBox.CheckedChanged += new System.EventHandler(this.translateCheckBox_CheckedChanged);
+            // 
+            // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.ClientSize = new System.Drawing.Size(537, 373);
+            this.Controls.Add(this.translateCheckBox);
             this.Controls.Add(this.WIPCustomLevelsDir);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.includeObstaclesBox);
@@ -206,7 +220,7 @@
             this.Controls.Add(this.ExecuteButton);
             this.Controls.Add(this.LoadFileButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Name = "SM2BSUI";
+            this.Name = "UserInterface";
             this.Text = "Stepmania2BeatSaberUI";
             this.Load += new System.EventHandler(this.Stepmania2BeatSaberUI_Load);
             this.ResumeLayout(false);
@@ -235,5 +249,6 @@
         private CheckBox includeObstaclesBox;
         private Label label1;
         private Button WIPCustomLevelsDir;
+        private CheckBox translateCheckBox;
     }
 }
