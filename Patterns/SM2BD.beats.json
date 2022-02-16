@@ -1,0 +1,218 @@
+{
+    "beatsByDifficulty": {
+        "all": [
+            {
+                "smid": 0,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 1,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 1,
+                            "_cutDirection": 1,
+                            "_lineIndex": 1
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 2
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 1,
+                            "_cutDirection": 0,
+                            "_lineIndex": 3
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 1,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 1,
+                            "_cutDirection": 1,
+                            "_lineIndex": 3
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 1,
+                            "_lineIndex": 2
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 1,
+                            "_cutDirection": 0,
+                            "_lineIndex": 1
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 2,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 1,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 1
+                        },
+                        {
+                            "_lineLayer": 1,
+                            "_type": 1,
+                            "_cutDirection": 0,
+                            "_lineIndex": 3
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 1,
+                            "_lineIndex": 1
+                        },
+                        {
+                            "_lineLayer": 0,
+                            "_type": 1,
+                            "_cutDirection": 1,
+                            "_lineIndex": 2
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 3,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 4,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 5,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 6,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            },
+            {
+                "smid": 7,
+                "bs": [
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ],
+                    [
+                        {
+                            "_lineLayer": 0,
+                            "_type": 0,
+                            "_cutDirection": 0,
+                            "_lineIndex": 0
+                        }
+                    ]
+                ]
+            }
+        ]
+    }
+}

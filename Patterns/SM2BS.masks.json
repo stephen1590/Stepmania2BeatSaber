@@ -1,0 +1,74 @@
+{
+    "masks" :[
+        {
+            "id" : 0,
+            "name": "Right-Hand Stairs",
+            "masks": [
+                "1000",
+                "0100",
+                "0010",
+                "0001"
+            ]
+        },
+        {
+            "id" : 1,
+            "name": "Left-Hand Stairs",
+            "masks": [
+                "0001",
+                "0100",
+                "0010",
+                "1000"
+            ]
+        },
+        {
+            "id" : 2,
+            "name": "Criss-cross",
+            "masks": [
+                "1001",
+                "0110"
+            ]
+        },
+        {
+            "id" : 3,
+            "name":"The Spin",
+            "masks": [
+                "1000",
+                "0100",
+                "0001",
+                "0010"
+            ]
+        },
+        {
+            "id" : 4,
+            "name":"The Down Shift",
+            "masks": [
+                "1100",
+                "0011"
+            ]
+        },
+        {
+            "id" : 5,
+            "name":"The Up Twist",
+            "masks": [
+                "1100",
+                "0011"
+            ]
+        },
+        {
+            "id" : 6,
+            "name":"Double Jump Horizontal",
+            "masks": [
+                "1001",
+                "1001"
+            ]
+        },
+        {
+            "id" : 7,
+            "name":"The Double Jump Vertical",
+            "masks": [
+                "0110",
+                "0110"
+            ]
+        }
+    ]
+}

@@ -465,6 +465,7 @@ namespace Stepmania2BeatSaber
         }
         private void TranslatePatterns(ref List<BSaberBeat> bSaberBeats)
         {
+
         }
         public void CheckConflicts(ref List<BSaberBeat> bSaberBeats)
         {
