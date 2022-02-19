@@ -87,11 +87,13 @@
             // 
             // consoleOutputWindow
             // 
+            this.consoleOutputWindow.HideSelection = false;
             this.consoleOutputWindow.Location = new System.Drawing.Point(12, 41);
             this.consoleOutputWindow.Name = "consoleOutputWindow";
             this.consoleOutputWindow.Size = new System.Drawing.Size(384, 320);
             this.consoleOutputWindow.TabIndex = 4;
-            this.consoleOutputWindow.Text = "";
+            this.consoleOutputWindow.Text = "This program will convert *.sm Stepmania files into Chromapper maps.\n\nPlease sele" +
+    "ct a file to continue...";
             this.consoleOutputWindow.TextChanged += new System.EventHandler(this.consoleOutputWindow_TextChanged);
             // 
             // openOutputButton

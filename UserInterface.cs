@@ -221,6 +221,7 @@ namespace Stepmania2BeatSaber
         public TextBoxWriter(RichTextBox output)
         {
             _output = output;
+            base.NewLine = "\n";
         }
         public override void Write(char value)
         {

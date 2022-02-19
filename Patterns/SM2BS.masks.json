@@ -1,74 +1,104 @@
-{
-    "masks" :[
-        {
-            "id" : 0,
-            "name": "Right-Hand Stairs",
-            "masks": [
-                "1000",
-                "0100",
-                "0010",
-                "0001"
-            ]
-        },
-        {
-            "id" : 1,
-            "name": "Left-Hand Stairs",
-            "masks": [
-                "0001",
-                "0100",
-                "0010",
-                "1000"
-            ]
-        },
-        {
-            "id" : 2,
-            "name": "Criss-cross",
-            "masks": [
-                "1001",
-                "0110"
-            ]
-        },
-        {
-            "id" : 3,
-            "name":"The Spin",
-            "masks": [
-                "1000",
-                "0100",
-                "0001",
-                "0010"
-            ]
-        },
-        {
-            "id" : 4,
-            "name":"The Down Shift",
-            "masks": [
-                "1100",
-                "0011"
-            ]
-        },
-        {
-            "id" : 5,
-            "name":"The Up Twist",
-            "masks": [
-                "1100",
-                "0011"
-            ]
-        },
-        {
-            "id" : 6,
-            "name":"Double Jump Horizontal",
-            "masks": [
-                "1001",
-                "1001"
-            ]
-        },
-        {
-            "id" : 7,
-            "name":"The Double Jump Vertical",
-            "masks": [
-                "0110",
-                "0110"
-            ]
-        }
+[
+  {
+    "id": 0,
+    "name": "Right-Hand Stairs",
+    "mask": [
+      "X000",
+      "0X00",
+      "00X0",
+      "000X"
     ]
-}
+  },
+  {
+    "id": 1,
+    "name": "Left-Hand Stairs",
+    "mask": [
+      "000X",
+      "0X00",
+      "00X0",
+      "X000"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Criss-cross",
+    "mask": [
+      "X00X",
+      "0XX0"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Spin",
+    "mask": [
+      "X000",
+      "0X00",
+      "000X",
+      "00X0"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Down Shift",
+    "mask": [
+      "XX00",
+      "00XX"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Up Twist",
+    "mask": [
+      "00XX",
+      "XX00"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Double Jump Horizontal",
+    "mask": [
+      "X00X",
+      "X00X"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Double Jump Vertical",
+    "mask": [
+      "0XX0",
+      "0XX0"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Corner Right To Double Horizontal",
+    "mask": [
+      "00XX",
+      "X00X"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Corner Left To Double Horizontal",
+    "mask": [
+      "X0X0",
+      "X00X"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Corner Right To Double Vertical",
+    "mask": [
+      "00XX",
+      "0XX0"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Corner Left To Double Vertical",
+    "mask": [
+      "X0X0",
+      "0XX0"
+    ]
+  }
+]

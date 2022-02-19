@@ -45,10 +45,11 @@ namespace Stepmania2BeatSaber
         };
         private static readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private static readonly string OptionsFileName = "SM2BS.json";
+        private static List<Pattern> p = new();
         /* ===================================================
         * Options Handler
         =================================================== */
-        public static void optionsPopulate(ref Options options)
+        internal static void optionsPopulate(ref Options options)
         {
             bool newOptions = false;
             if (File.Exists(AppDir + "\\" + OptionsFileName))
@@ -71,7 +72,7 @@ namespace Stepmania2BeatSaber
                 optionsSave(ref options);
             }
         }
-        public static void optionsSave(ref Options options)
+        internal static void optionsSave(ref Options options)
         {
             if (options == null)
             {
@@ -83,7 +84,7 @@ namespace Stepmania2BeatSaber
         /* ===================================================
         * Misc
         =================================================== */
-        public static GameDifficulty FindDifficulty(string difficulty)
+        internal static GameDifficulty FindDifficulty(string difficulty)
         {
             switch (difficulty.Split(":")[0].Trim())
             {
@@ -121,9 +122,29 @@ namespace Stepmania2BeatSaber
             }           
             return items;
         }
-        internal static string ReadFile(string dir, string optionsFileName)
+        internal static List<Pattern> getPatterns()
         {
-            using StreamReader r = new(dir+"\\"+optionsFileName);
+            if (p.Count > 0)
+            {
+                return p;
+            }
+            else
+            {
+                string patternDir = ".\\Patterns";
+                string patternFile = "SM2BS.masks.json";
+                string jsonString = ReadFile(patternDir, patternFile);
+                //JToken j = JObject.Parse(jsonString);
+                List<Pattern> items = JsonConvert.DeserializeObject<List<Pattern>>(jsonString);
+                if (items == null)
+                {
+                    items = new();
+                }
+                return items;
+            }
+        }
+        internal static string ReadFile(string dir, string filename)
+        {
+            using StreamReader r = new(dir+"\\"+ filename);
             var v = r.ReadToEnd();
             string retVal = "";
             if (v != null)
@@ -133,7 +154,7 @@ namespace Stepmania2BeatSaber
             }
             return retVal;
         }
-        public static void WriteJSON(JObject jOb, string dir, string filename)
+        internal static void WriteJSON(JObject jOb, string dir, string filename)
         {
             // ---------
             if (!Directory.Exists(dir))
@@ -142,7 +163,7 @@ namespace Stepmania2BeatSaber
             using StreamWriter writer = new(dir + "\\" + filename, false);
             writer.Write(jOb.ToString());
         }
-        public static void WriteSongs(OrderedDictionary objectToWrite, string directory, string songName)
+        internal static void WriteSongs(OrderedDictionary objectToWrite, string directory, string songName)
         {
             string basefilename = "Standard.dat";
             string newPath = directory + @"\BeatSaber - " + songName + @"\";
@@ -175,7 +196,7 @@ namespace Stepmania2BeatSaber
                 }
             }
         }
-        public static string GetNextLine(StreamReader sr)
+        internal static string GetNextLine(StreamReader sr)
         {
             try
             {
@@ -193,11 +214,11 @@ namespace Stepmania2BeatSaber
         /* ===================================================
          * Debug output
          =================================================== */
-        public static void Output(string outputString, ConsoleColor color)
+        internal static void Output(string outputString, ConsoleColor color)
         {
             Output(outputString, color, DebugState);
         }
-        public static void Output(string outputString, ConsoleColor color, DebugState dbState)
+        internal static void Output(string outputString, ConsoleColor color, DebugState dbState)
         {
             if (dbState == DebugState.on)
             {
@@ -206,11 +227,11 @@ namespace Stepmania2BeatSaber
                 Console.ResetColor();
             }
         }
-        public static void Output(string outputString)
+        internal static void Output(string outputString)
         {
             Output(outputString, DebugState);
         }
-        public static void Output(string outputString, DebugState dbState)
+        internal static void Output(string outputString, DebugState dbState)
         {
             if (dbState == DebugState.on)
             {

@@ -235,4 +235,10 @@ namespace Stepmania2BeatSaber
         public RawDirection RawDirection { get; set; }
         public RawNoteType RawNoteType { get; set; }
     }
+    public class Pattern
+    {
+        public List<string> mask { get; set; } = new();
+        public int id { get; set; } = 0;
+        public string name { get; set; } = "";
+    }
 }
