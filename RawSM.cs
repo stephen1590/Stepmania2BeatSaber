@@ -241,4 +241,14 @@ namespace Stepmania2BeatSaber
         public int id { get; set; } = 0;
         public string name { get; set; } = "";
     }
+    public class FoundPattern
+    {
+        public int patternId { get; set; } = 0;
+        public List<int> rawBeatIndex { get; set; } = new();
+        public FoundPattern(int p, List<int> i)
+        {
+            patternId = p;
+            rawBeatIndex = i;
+        }
+    }
 }

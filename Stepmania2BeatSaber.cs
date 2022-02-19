@@ -182,8 +182,8 @@ namespace Stepmania2BeatSaber
                     /*===============================================
                      * Create BeatSaber equivalents and fix it up given specific options!
                      *===============================================*/
-                    List<BSaberBeat> tbp = TranslatedBeatParsing(ref rawBeats);
-                    List<BSaberBeat> bSaberBeats = StandardBeatParsing(rawBeats);
+                    Dictionary<int, FoundPattern> foundPatterns = TranslatedBeatParsing(ref rawBeats);
+                    List<BSaberBeat> bSaberBeats = StandardBeatParsing(rawBeats, foundPatterns);
                     if (o.ResolveRepeats)
                     {
                         CheckRepeats(ref bSaberBeats);
@@ -316,15 +316,29 @@ namespace Stepmania2BeatSaber
             }
             return retArray;
         }
-        public List<BSaberBeat> StandardBeatParsing(List<RawBeat> rawBeats)
+        public List<BSaberBeat> StandardBeatParsing(List<RawBeat> rawBeats, Dictionary<int, FoundPattern> foundPatterns)
         {
+            //Get the equivalent notes that we're mapping to
+            TempBSaberEquivalentHelper tbse = new();
+            Dictionary<int,List<BSaberNote>> replacements = tbse.getBSaberReplacementNotes(foundPatterns);
+            //proceed through our beat buffer
             List<BSaberBeat> retArray = new();
-            int beatIndex = 1;
-                List<RawBeat> rawBeatBuffer = new();
-                foreach (RawBeat currentBeat in rawBeatBuffer)
+            for(int beatIndex = 0; beatIndex< rawBeats.Count; beatIndex++)
+            {
+                RawBeat currentBeat = rawBeats[beatIndex];
+                //New Pattern
+                BSaberBeat b = new();
+                if (replacements.ContainsKey(beatIndex))
                 {
-                    //New Pattern
-                    BSaberBeat b = new();
+                    foreach (BSaberNote bsn in replacements[beatIndex])
+                    {
+                        bsn._time = currentBeat.BeatTime;
+                        bsn._beatIndex = beatIndex;
+                        b.addNote(bsn);
+                    }
+                }
+                else
+                {
                     RawNote r;
                     for (int count = 0; count < currentBeat.Count; count++)
                     {
@@ -371,12 +385,17 @@ namespace Stepmania2BeatSaber
                             CheckNoteException(r);
                         }
                     }
-                    if (b.Count() > 0)
-                    {
-                        retArray.Add(b);
-                    }
-                    beatIndex++;
                 }
+                //Do we have a matching pattern at this index?
+                if (foundPatterns.ContainsKey(beatIndex))
+                {
+                    //b = tbse.getBSaberEquivalentFromPattern(beatIndex, 0.0);
+                }
+                if (b.Count() > 0)
+                {
+                    retArray.Add(b);
+                }
+            }
             return retArray;
         }
         public static List<BSaberObstacle> ObstaclesParse(List<RawBeat> rawBeats)
@@ -460,17 +479,18 @@ namespace Stepmania2BeatSaber
             }
             return obstArray;
         }
-        private List<BSaberBeat> TranslatedBeatParsing(ref List<RawBeat> rawBeats)
+        private Dictionary<int, FoundPattern> TranslatedBeatParsing(ref List<RawBeat> rawBeats)
         {
             System.DateTime startTime = System.DateTime.Now;
-            List<BSaberBeat> retArray = new();
+            Dictionary<int, FoundPattern> foundPatterns = new();
+            List<int> usedBeats = new();
             if (o.TranslatePatterns)
             {
-                int beatIndex = 1;
-                List<RawBeat> rawBeatBuffer = new();
                 List<Pattern> patterns = Helper.getPatterns();
+                //Dictionary<int,List<FoundPattern>> foundPatternDictionary = new();
                 foreach (Pattern p in patterns)
                 {
+                    //List<FoundPattern> foundPatterns = new();
                     for (int m = 0; m<p.mask.Count; m++)
                     {
                         if (m > 0 && p.name.IndexOf("Double") >-1)
@@ -488,49 +508,91 @@ namespace Stepmania2BeatSaber
                             }
                             currentMask.Add(p.mask[mIndex]);
                         }
+                        List<int> tempUsedBeats = new();
+                        //we have a new mask to compare to - loop through all beats to see if we have matches
                         for (int index = 0; index < rawBeats.Count; index++)
                         {
                             if (rawBeats[index].Mask == currentMask[0])
                             {
                                 int startIndex = index;
                                 int localIndex = 1;
-                                while (localIndex < currentMask.Count)
+                                //can't reuse the same beats - skip for now
+                                List<int> beatIndexes = new();
+
+                                if (!usedBeats.Contains(index))
                                 {
-                                    //Keep going long as we have enough beats
-                                    if ((index + localIndex) < rawBeats.Count)
+                                    beatIndexes.Add(index);
+                                    tempUsedBeats.Add(index);
+                                    //start looking at the next index already!
+                                    index++;
+                                    while (localIndex < currentMask.Count)
                                     {
-                                        RawBeat r = rawBeats[index + localIndex];
-                                        //skip any empty beats
-                                        if (r.Mask.Equals("0000"))
+                                        //Keep going long as we have enough beats
+                                        if (index < rawBeats.Count)
                                         {
-                                            //Get the next beat
-                                            index++;
-                                        }
-                                        else
-                                        {
-                                            //Keep going unless the masks finally differ
-                                            if (r.Mask != currentMask[localIndex])
+                                            RawBeat r = rawBeats[index];
+                                            //skip any empty beats
+                                            if (r.Mask.Equals("0000"))
                                             {
-                                                break;
+                                                //Get the next beat
+                                                index++;
                                             }
                                             else
                                             {
-                                                //we had a match, so let's check the next one!
-                                                localIndex++;
-                                                index++;
+                                                //Keep going unless the masks finally differ
+                                                if (r.Mask != currentMask[localIndex])
+                                                {
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    if (!usedBeats.Contains(index))
+                                                    {
+                                                        //we had a match, so let's save it and check the next one!
+                                                        beatIndexes.Add(index);
+                                                        tempUsedBeats.Add(index);
+                                                        localIndex++;
+                                                        index++;
+                                                    }
+                                                    else {
+                                                        //dead end - move onto the next pattern
+                                                        break;
+                                                    }
+                                                }
                                             }
                                         }
+                                        else
+                                        {
+                                            break;
+                                        }
                                     }
-                                    else
-                                    {
-                                        break;
-                                    }
+                                }
+                                else
+                                {
+                                    Helper.Output("Repeat Beat - Skipping");
                                 }
                                 if (localIndex == currentMask.Count)
                                 {
                                     //If we exhausted our local index, we have a matching pattern
                                     Helper.Output("=================================", DebugState.on);
-                                    Helper.Output(String.Format("Pattern [{0}].[{1}]{2}Found at beat index: [{3}]", p.name, m.ToString(),"\n", startIndex.ToString()),DebugState.on);
+                                    if (foundPatterns.Keys.Contains(startIndex))
+                                    {
+                                        Helper.Output(String.Format("Skipping Repeat Pattern [{0}].[{1}]{2}Found at beat index: [{3}]", p.name, m.ToString(), "\n", startIndex.ToString()), DebugState.on);
+                                    }
+                                    else
+                                    {
+                                        if(beatIndexes.Count != p.mask.Count)
+                                        {
+                                            throw new NotSupportedException("Beat Mismatch! We should have 1 beat index for every mask. This shouldn't have happened.");
+                                        }
+                                        Helper.Output(String.Format("Pattern [{0}].[{1}]{2}Found at beat index: [{3}]", p.name, m.ToString(), "\n", startIndex.ToString()), DebugState.on);
+                                        foundPatterns.Add(startIndex, new(p.id, beatIndexes));
+                                        //only add the temporary used beats if we're actually using them!
+                                        foreach(int tempIndex in tempUsedBeats)
+                                        {
+                                            usedBeats.Add(tempIndex);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -541,64 +603,8 @@ namespace Stepmania2BeatSaber
                 Helper.Output("=================================", DebugState.on);
                 Helper.Output(String.Format("Sequencing took: {0}ms",diff.TotalMilliseconds.ToString()), DebugState.on);
                 Helper.Output("=================================", DebugState.on);
-                foreach (RawBeat currentBeat in rawBeatBuffer)
-                    {
-                        //New Pattern
-                        BSaberBeat b = new();
-                        RawNote r;
-                        for (int count = 0; count < currentBeat.Count; count++)
-                        {
-                            r = currentBeat.Get(count);
-                            if (r.RawNoteType != RawNoteType.none && r.RawNoteType == RawNoteType.normal)
-                            {
-                                BSaberNote note = new();
-                                if (count > 1)
-                                    note._type = NoteType.blue;
-                                switch (r.RawDirection)
-                                {
-                                    case RawDirection.left:
-                                        {
-                                            note._cutDirection = CutDirection.left;
-                                            note._lineIndex = LineIndex.left;
-                                            break;
-                                        }
-                                    case RawDirection.down:
-                                        {
-                                            note._lineIndex = LineIndex.centerLeft;
-                                            note._cutDirection = CutDirection.down;
-                                            break;
-                                        }
-                                    case RawDirection.up:
-                                        {
-                                            note._lineIndex = LineIndex.centerRight;
-                                            note._cutDirection = CutDirection.up;
-                                            break;
-                                        }
-                                    case RawDirection.right:
-                                        {
-                                            note._cutDirection = CutDirection.right;
-                                            note._lineIndex = LineIndex.right;
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            throw new NotImplementedException("Too many notes. Something is critically wrong.");
-                                        }
-                                }
-                                note._time = currentBeat.BeatTime;
-                                note._beatIndex = beatIndex;
-                                b.addNote(note);
-                                CheckNoteException(r);
-                            }
-                        }
-                        if (b.Count() > 0)
-                        {
-                            retArray.Add(b);
-                        }
-                        beatIndex++;
-                    }
             }
-            return retArray;
+            return foundPatterns;
         }
         public void CheckConflicts(ref List<BSaberBeat> bSaberBeats)
         {

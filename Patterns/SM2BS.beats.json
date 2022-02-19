@@ -1,0 +1,214 @@
+[
+    {
+        "smid": 0,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "Down",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "Down",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 2
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "up",
+                    "lineIndex": 3
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 1,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "Down",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "Down",
+                    "lineIndex": 2
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "up",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 2,
+        "bs": [
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 1
+                },
+                {
+                    "lineLayer": 1,
+                    "type" : "blue",
+                    "cutDirection": "up",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "Down",
+                    "lineIndex": 1
+                },
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "Down",
+                    "lineIndex": 2
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 3,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 4,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 5,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 6,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 7,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    }
+]

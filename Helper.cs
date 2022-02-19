@@ -46,6 +46,7 @@ namespace Stepmania2BeatSaber
         private static readonly string AppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\SM2BS\\";
         private static readonly string OptionsFileName = "SM2BS.json";
         private static List<Pattern> p = new();
+        private static List<BeatSaberEquivalent> bs = new();
         /* ===================================================
         * Options Handler
         =================================================== */
@@ -133,12 +134,33 @@ namespace Stepmania2BeatSaber
                 string patternDir = ".\\Patterns";
                 string patternFile = "SM2BS.masks.json";
                 string jsonString = ReadFile(patternDir, patternFile);
-                //JToken j = JObject.Parse(jsonString);
                 List<Pattern> items = JsonConvert.DeserializeObject<List<Pattern>>(jsonString);
                 if (items == null)
                 {
                     items = new();
                 }
+                p = items;
+                return items;
+            }
+        }
+        internal static List<BeatSaberEquivalent> getBeatEquivalents()
+        {
+            if (bs.Count > 0)
+            {
+                return bs;
+            }
+            else
+            {
+                string patternDir = ".\\Patterns";
+                string beatFile = "SM2BS.beats.json";
+                string jsonString = ReadFile(patternDir, beatFile);
+                //JToken j = JObject.Parse(jsonString);
+                List<BeatSaberEquivalent> items = JsonConvert.DeserializeObject<List<BeatSaberEquivalent>>(jsonString);
+                if (items == null)
+                {
+                    items = new();
+                }
+                bs = items;
                 return items;
             }
         }
