@@ -188,10 +188,10 @@ namespace Stepmania2BeatSaber
                     {
                         CheckRepeats(ref bSaberBeats);
                     }
-                    if (o.ResolveConflicts)
-                    {
-                        CheckConflicts(ref bSaberBeats);
-                    }
+                   //if (o.ResolveConflicts)
+                   //{
+                   //    CheckConflicts(ref rawBeats);
+                   //}
                     /*===============================================
                      * We finished corrections with notes - collapse the beats into notes
                      *===============================================*/
@@ -565,7 +565,7 @@ namespace Stepmania2BeatSaber
                                 {
                                     Helper.Output("Repeat Beat - Skipping");
                                 }
-                                if (localIndex == currentMask.Count)
+                                if (localIndex == currentMask.Count && beatIndexes.Count > 0)
                                 {
                                     //If we exhausted our local index, we have a matching pattern
                                     Helper.Output("=================================", DebugState.on);
@@ -600,8 +600,10 @@ namespace Stepmania2BeatSaber
             }
             return foundPatterns;
         }
-        public void CheckConflicts(ref List<BSaberBeat> bSaberBeats)
+        
+        public Dictionary<int, List<BSaberBeat>> CheckConflicts(ref List<RawBeat> rawBeats)
         {
+            return null;
         }
         private void CheckRepeats(ref List<BSaberBeat> bSaberBeats)
         {

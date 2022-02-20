@@ -204,5 +204,33 @@
       "000X",
       "0X00"
     ]
+  },
+  {
+    "id": 24,
+    "name": "Double Left Hand Down",
+    "mask": [
+      "XX00"
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Double Right Hand Up",
+    "mask": [
+      "00XX"
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Left Stagger",
+    "mask": [
+      "X0X0"
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Right Stagger",
+    "mask": [
+      "0X0X"
+    ]
   }
 ]
