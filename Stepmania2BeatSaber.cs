@@ -182,7 +182,11 @@ namespace Stepmania2BeatSaber
                     /*===============================================
                      * Create BeatSaber equivalents and fix it up given specific options!
                      *===============================================*/
-                    Dictionary<int, FoundPattern> foundPatterns = TranslatedBeatParsing(ref rawBeats);
+
+                    Dictionary<int, FoundPattern> foundPatterns = new();
+                    if (o.TranslatePatterns)
+                        foundPatterns = TranslatedBeatParsing(ref rawBeats);
+
                     List<BSaberBeat> bSaberBeats = StandardBeatParsing(rawBeats, foundPatterns);
                     if (o.ResolveRepeats)
                     {

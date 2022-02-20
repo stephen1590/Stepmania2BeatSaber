@@ -148,11 +148,125 @@ namespace Stepmania2BeatSaber
         }
         public bool isLike(BSaberNote n)
         {
-            if (_lineLayer == n._lineLayer && _type == n._type && _cutDirection == n._cutDirection)
+            if (this._lineLayer == n._lineLayer && this._type == n._type && this._cutDirection == n._cutDirection)
             {
                 return true;
             }
             return false;
+        }
+        public void flip()
+        {
+            switch (this._cutDirection)
+            {
+                case CutDirection.left:
+                    {
+                        this._cutDirection = CutDirection.right;
+                        break;
+                    }
+                case CutDirection.right:
+                    {
+                        this._cutDirection = CutDirection.left;
+                        break;
+                    }
+                case CutDirection.up:
+                    {
+                        this._cutDirection = CutDirection.down;
+                        break;
+                    }
+                case CutDirection.down:
+                    {
+                        this._cutDirection = CutDirection.up;
+                        break;
+                    }
+                case CutDirection.downleft:
+                    {
+                        this._cutDirection = CutDirection.upright;
+                        break;
+                    }
+                case CutDirection.downright:
+                    {
+                        this._cutDirection = CutDirection.upleft;
+                        break;
+                    }
+                case CutDirection.upright:
+                    {
+                        this._cutDirection = CutDirection.downleft;
+                        break;
+                    }
+                case CutDirection.upleft:
+                    {
+                        this._cutDirection = CutDirection.downright;
+                        break;
+                    }
+            }
+        }
+        public void shiftRight()
+        {
+            if(this._lineIndex != LineIndex.right)
+                this._lineIndex++;
+            //else
+                //this._lineIndex = LineIndex.left;
+        }
+        public void shiftLeft()
+        {
+            if (this._lineIndex != LineIndex.left)
+                this._lineIndex--;
+            //else
+                //this._lineIndex = LineIndex.right;
+        }
+        public void shiftUp()
+        {
+            if (this._lineLayer != LineLayer.top)
+                this._lineLayer++;
+            //else
+            //this._lineLayer = LineLayer.bottom;
+        }
+        public void shiftDown()
+        {
+            if (this._lineLayer != LineLayer.bottom)
+                this._lineLayer--;
+            //else
+            //this._lineLayer = LineLayer.top;
+        }
+        public void pivot()
+        {
+            if(this._cutDirection == CutDirection.left || this._cutDirection ==CutDirection.right || this._cutDirection == CutDirection.upleft || this._cutDirection == CutDirection.upright || this._cutDirection == CutDirection.downleft || this._cutDirection == CutDirection.downright)
+            {
+                switch (this._lineIndex)
+                {
+                    case LineIndex.left:
+                        {
+                            shiftRight();
+                            break;
+                        }
+                    case LineIndex.right:
+                        {
+                            shiftLeft();
+                            break;
+                        }
+                    case LineIndex.centerLeft:
+                        {
+                            shiftRight();
+                            break;
+                        }
+                    case LineIndex.centerRight:
+                        {
+                            shiftLeft();
+                            break;
+                        }
+                }
+                if (this._cutDirection == CutDirection.up)
+                {
+                    if(this._lineLayer == LineLayer.bottom)
+                        shiftUp();
+                }
+                else if (this._cutDirection == CutDirection.down)
+                {
+                    shiftUp();
+                }
+                this.flip();
+
+            }
         }
     }
     public class BSaberObstacle : BSaber
