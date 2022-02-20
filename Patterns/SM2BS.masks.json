@@ -71,7 +71,7 @@
   },
   {
     "id": 8,
-    "name": "Corner Right To Double Horizontal",
+    "name": "Corner Right To Horizontal",
     "mask": [
       "00XX",
       "X00X"
@@ -79,7 +79,7 @@
   },
   {
     "id": 9,
-    "name": "Corner Left To Double Horizontal",
+    "name": "Corner Left To Horizontal",
     "mask": [
       "X0X0",
       "X00X"
@@ -87,7 +87,7 @@
   },
   {
     "id": 10,
-    "name": "Corner Right To Double Vertical",
+    "name": "Corner Right To Vertical",
     "mask": [
       "00XX",
       "0XX0"
@@ -95,7 +95,7 @@
   },
   {
     "id": 11,
-    "name": "Corner Left To Double Vertical",
+    "name": "Corner Left To Vertical",
     "mask": [
       "X0X0",
       "0XX0"
@@ -103,7 +103,7 @@
   },
   {
     "id": 12,
-    "name": "Stick Left Bottom",
+    "name": "Sticky Left Bottom",
     "mask": [
       "X000",
       "0X00",
@@ -112,7 +112,7 @@
   },
   {
     "id": 13,
-    "name": "Stick Left Top",
+    "name": "Sticky Left Top",
     "mask": [
       "X000",
       "00X0",
@@ -135,6 +135,74 @@
       "000X",
       "0X00",
       "000X"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Bottom Corner Right To Horizontal",
+    "mask": [
+      "0X0X",
+      "X00X"
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Bottom Corner Left To Horizontal",
+    "mask": [
+      "XX00",
+      "X00X"
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Bottom Corner Right To Vertical",
+    "mask": [
+      "0X0X",
+      "0XX0"
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Bottom Corner Left To Vertical",
+    "mask": [
+      "XX00",
+      "0XX0"
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Sticky Bottom Left",
+    "mask": [
+      "0X00",
+      "X000",
+      "0X00"
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Sticky Top Left",
+    "mask": [
+      "00X0",
+      "X000",
+      "00X0"
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Sticky Top Right",
+    "mask": [
+      "00X0",
+      "000X",
+      "00X0"
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Sticky Bottom Right",
+    "mask": [
+      "0X00",
+      "000X",
+      "0X00"
     ]
   }
 ]

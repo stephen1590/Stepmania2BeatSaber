@@ -435,7 +435,8 @@
                 }
             ]
         ]
-    },{
+    },
+    {
         "smid": 13,
         "bs": [
             [
@@ -518,6 +519,254 @@
                     "type" : "blue",
                     "cutDirection": "up",
                     "lineIndex": 2
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 16,
+        "bs": [
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "upleft",
+                    "lineIndex": 1
+                },
+                {
+                    "lineLayer": 1,
+                    "type" : "blue",
+                    "cutDirection": "upright",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "down",
+                    "lineIndex": 0
+                },
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "down",
+                    "lineIndex": 3
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 17,
+        "bs": [
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "upleft",
+                    "lineIndex": 0
+                },
+                {
+                    "lineLayer": 1,
+                    "type" : "blue",
+                    "cutDirection": "upright",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "down",
+                    "lineIndex": 0
+                },
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "down",
+                    "lineIndex": 3
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 18,
+        "bs": [
+            [
+                {
+                    "lineLayer": 2,
+                    "type" : "blue",
+                    "cutDirection": "right",
+                    "lineIndex": 3
+                },
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "downLeft",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 1
+                },
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "up",
+                    "lineIndex": 2
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 19,
+        "bs": [
+            [
+                {
+                    "lineLayer": 2,
+                    "type" : "red",
+                    "cutDirection": "left",
+                    "lineIndex": 0
+                },
+                {
+                    "lineLayer": 1,
+                    "type" : "blue",
+                    "cutDirection": "downright",
+                    "lineIndex": 2
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "up",
+                    "lineIndex": 1
+                },
+                {
+                    "lineLayer": 0,
+                    "type" : "blue",
+                    "cutDirection": "up",
+                    "lineIndex": 2
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 20,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "downleft",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "right",
+                    "lineIndex": 2
+                }
+            ],
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "left",
+                    "lineIndex": 1
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 21,
+        "bs": [
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "upleft",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "right",
+                    "lineIndex": 0
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "left",
+                    "lineIndex": 0
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 22,
+        "bs": [
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "upleft",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "right",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "left",
+                    "lineIndex": 1
+                }
+            ]
+        ]
+    },
+    {
+        "smid": 23,
+        "bs": [
+            [
+                {
+                    "lineLayer": 0,
+                    "type" : "red",
+                    "cutDirection": "downleft",
+                    "lineIndex": 1
+                }
+            ],
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "right",
+                    "lineIndex": 3
+                }
+            ],
+            [
+                {
+                    "lineLayer": 1,
+                    "type" : "red",
+                    "cutDirection": "left",
+                    "lineIndex": 1
                 }
             ]
         ]
