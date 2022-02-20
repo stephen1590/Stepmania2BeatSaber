@@ -49,10 +49,15 @@ namespace Stepmania2BeatSaber
                     Helper.Output("Current Pattern case is not programmed: " + f.patternId.ToString());
                 }
                 int beatIndex = 0;
-                foreach (List<BeatSaberEquivalentNotes> bsnl in temp.bs)
+                for(int i = 0; i < temp.bs.Count; i++)
                 {
+                    int bIndex = i + f.startIndex;
+                    if (bIndex >= temp.bs.Count)
+                        bIndex = bIndex - temp.bs.Count;
+                    List<BeatSaberEquivalentNotes> beat = temp.bs[bIndex];
+
                     notes = new();
-                    foreach (BeatSaberEquivalentNotes bsn in bsnl)
+                    foreach(BeatSaberEquivalentNotes bsn in beat)
                     {
                         BSaberNote n = new();
 

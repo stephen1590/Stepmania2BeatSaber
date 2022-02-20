@@ -386,11 +386,6 @@ namespace Stepmania2BeatSaber
                         }
                     }
                 }
-                //Do we have a matching pattern at this index?
-                if (foundPatterns.ContainsKey(beatIndex))
-                {
-                    //b = tbse.getBSaberEquivalentFromPattern(beatIndex, 0.0);
-                }
                 if (b.Count() > 0)
                 {
                     retArray.Add(b);
@@ -490,7 +485,6 @@ namespace Stepmania2BeatSaber
                 //Dictionary<int,List<FoundPattern>> foundPatternDictionary = new();
                 foreach (Pattern p in patterns)
                 {
-                    //List<FoundPattern> foundPatterns = new();
                     for (int m = 0; m<p.mask.Count; m++)
                     {
                         if (m > 0 && p.name.IndexOf("Double") >-1)
@@ -575,7 +569,7 @@ namespace Stepmania2BeatSaber
                                 {
                                     //If we exhausted our local index, we have a matching pattern
                                     Helper.Output("=================================", DebugState.on);
-                                    if (foundPatterns.Keys.Contains(startIndex))
+                                    if (foundPatterns.ContainsKey(startIndex))
                                     {
                                         Helper.Output(String.Format("Skipping Repeat Pattern [{0}].[{1}]{2}Found at beat index: [{3}]", p.name, m.ToString(), "\n", startIndex.ToString()), DebugState.on);
                                     }
@@ -586,7 +580,7 @@ namespace Stepmania2BeatSaber
                                             throw new NotSupportedException("Beat Mismatch! We should have 1 beat index for every mask. This shouldn't have happened.");
                                         }
                                         Helper.Output(String.Format("Pattern [{0}].[{1}]{2}Found at beat index: [{3}]", p.name, m.ToString(), "\n", startIndex.ToString()), DebugState.on);
-                                        foundPatterns.Add(startIndex, new(p.id, beatIndexes));
+                                        foundPatterns.Add(startIndex, new(p.id, beatIndexes, m));
                                         //only add the temporary used beats if we're actually using them!
                                         foreach(int tempIndex in tempUsedBeats)
                                         {
