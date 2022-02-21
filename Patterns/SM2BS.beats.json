@@ -719,7 +719,7 @@
             [
                 {
                     "lineLayer": 1,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "upleft",
                     "lineIndex": 1
                 }
@@ -727,7 +727,7 @@
             [
                 {
                     "lineLayer": 0,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "right",
                     "lineIndex": 3
                 }
@@ -735,7 +735,7 @@
             [
                 {
                     "lineLayer": 0,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "left",
                     "lineIndex": 1
                 }
@@ -748,7 +748,7 @@
             [
                 {
                     "lineLayer": 0,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "downleft",
                     "lineIndex": 1
                 }
@@ -756,7 +756,7 @@
             [
                 {
                     "lineLayer": 1,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "right",
                     "lineIndex": 3
                 }
@@ -764,7 +764,7 @@
             [
                 {
                     "lineLayer": 1,
-                    "type" : "red",
+                    "type" : "blue",
                     "cutDirection": "left",
                     "lineIndex": 1
                 }

@@ -29,8 +29,6 @@ namespace Stepmania2BeatSaber
         {
             Dictionary<int, List<BSaberNote>> retVal = new();
             List<BSaberNote> notes = new();
-
-            List<BSaberNote> l = new();
             bool found = false;
             BeatSaberEquivalent temp = new();
             foreach(FoundPattern f in foundPatterns.Values)

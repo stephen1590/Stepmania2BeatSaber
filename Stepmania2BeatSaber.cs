@@ -486,7 +486,6 @@ namespace Stepmania2BeatSaber
             if (o.TranslatePatterns)
             {
                 List<Pattern> patterns = Helper.getPatterns();
-                //Dictionary<int,List<FoundPattern>> foundPatternDictionary = new();
                 foreach (Pattern p in patterns)
                 {
                     for (int m = 0; m<p.mask.Count; m++)
@@ -604,7 +603,6 @@ namespace Stepmania2BeatSaber
             }
             return foundPatterns;
         }
-        
         public Dictionary<int, List<BSaberBeat>> CheckConflicts(ref List<RawBeat> rawBeats)
         {
             return null;
